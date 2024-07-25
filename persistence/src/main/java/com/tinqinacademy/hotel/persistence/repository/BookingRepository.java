@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.persistence.repository;
 
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
+import com.tinqinacademy.hotel.persistence.model.other.BookedInterval;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,8 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             "(b.startDate < :startDate AND b.endDate > :endDate) OR " +
             "(:startDate < b.startDate AND :endDate > b.endDate))")
     boolean isRoomBooked(@Param("roomId") UUID roomId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+    @Query("select new com.tinqinacademy.hotel.persistence.model.other.BookedInterval(b.startDate, b.endDate) " +
+            "from Booking b where b.room.id = :roomId")
+    List<BookedInterval> findAllBookedIntervalsByRoomId(@Param("roomId") UUID roomId);
 }

@@ -4,10 +4,8 @@ import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.core.converters.BaseConverter;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;
 import com.tinqinacademy.hotel.persistence.model.enums.BathroomType;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 public class CreateRoomInputToRoom extends BaseConverter<CreateRoomInput, Room.RoomBuilder, CreateRoomInputToRoom> {
 

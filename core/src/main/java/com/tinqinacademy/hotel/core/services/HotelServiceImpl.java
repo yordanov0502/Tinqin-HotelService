@@ -1,19 +1,16 @@
 package com.tinqinacademy.hotel.core.services;
 
 
-import com.tinqinacademy.hotel.api.model.enums.BathroomType;
-import com.tinqinacademy.hotel.api.model.enums.BedSize;
-
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableRoomsIdsOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAvailableRoomsInput;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.BookedInterval;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoInput;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
 import com.tinqinacademy.hotel.api.services.HotelService;
-import com.tinqinacademy.hotel.core.converters.booking.BookRoomInputToBooking;
 import com.tinqinacademy.hotel.core.exception.exceptions.BookedRoomException;
 import com.tinqinacademy.hotel.core.exception.exceptions.BookingDatesException;
 import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
@@ -26,12 +23,9 @@ import com.tinqinacademy.hotel.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,21 +54,25 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public RoomInfoOutput getRoomById(RoomInfoInput input) {
+    public RoomInfoOutput getRoomInfo(RoomInfoInput input) {
 
-        log.info("Start getRoomById input:{}",input);
+        log.info("Start getRoomInfo input:{}",input);
 
-        RoomInfoOutput output = RoomInfoOutput.builder()
-                .roomId(input.getRoomId())
-                .price(BigDecimal.valueOf(147.55))
-                .floor(4)
-                .bedSize(BedSize.getByCode("double"))
-                .bathroomType(BathroomType.getByCode("private"))
-                .bedCount(2)
-                .datesOccupied(new ArrayList<>(List.of(LocalDate.of(2024, 7, 5),LocalDate.of(2024, 7, 7))))
+        Room room = roomRepository
+                .findById(UUID.fromString(input.getRoomId()))
+                .orElseThrow(() -> new NotFoundException("Room with id["+input.getRoomId()+"] doesn't exist."));
+
+        List<BookedInterval> roomBookedIntervals = bookingRepository
+                .findAllBookedIntervalsByRoomId(room.getId())
+                .stream()
+                .map(b -> new BookedInterval(b.getStartDate(),b.getEndDate()))
+                .toList();
+
+        RoomInfoOutput output = conversionService.convert(room,RoomInfoOutput.RoomInfoOutputBuilder.class)
+                .datesOccupied(roomBookedIntervals)
                 .build();
 
-        log.info("End getRoomById output:{}",output);
+        log.info("End getRoomInfo output:{}",output);
 
         return output;
     }

@@ -78,7 +78,7 @@ public class HotelController {
                 .roomId(roomId)
                 .build();
 
-        RoomInfoOutput output = hotelService.getRoomById(input);
+        RoomInfoOutput output = hotelService.getRoomInfo(input);
 
         return new ResponseEntity<>(output,HttpStatus.OK);
     }
