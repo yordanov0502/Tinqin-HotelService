@@ -6,7 +6,6 @@ import com.tinqinacademy.hotel.api.model.enums.BedSize;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 @Builder(toBuilder = true)
@@ -23,5 +22,5 @@ public class RoomInfoOutput {
     private BedSize bedSize;
     private BathroomType bathroomType;
     private Integer bedCount;
-    private List<LocalDate> datesOccupied;
+    private List<BookedInterval> datesOccupied;
 }

@@ -13,7 +13,7 @@ import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
 public interface HotelService {
 
     AvailableRoomsIdsOutput getIdsOfAvailableRooms(GetIdsOfAvailableRoomsInput input);
-    RoomInfoOutput getRoomById(RoomInfoInput input);
+    RoomInfoOutput getRoomInfo(RoomInfoInput input);
 
     BookRoomOutput bookRoom(BookRoomInput input);
     UnbookRoomOutput unbookRoom(UnbookRoomInput input);
