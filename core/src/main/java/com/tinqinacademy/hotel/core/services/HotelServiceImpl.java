@@ -17,6 +17,8 @@ import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;
 import com.tinqinacademy.hotel.persistence.model.entity.User;
+import com.tinqinacademy.hotel.persistence.model.enums.BathroomType;
+import com.tinqinacademy.hotel.persistence.model.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import com.tinqinacademy.hotel.persistence.repository.UserRepository;
@@ -44,9 +46,15 @@ public class HotelServiceImpl implements HotelService {
 
         log.info("Start getIdsOfAvailableRoomsInput input:{}",input);
 
-        AvailableRoomsIdsOutput output = AvailableRoomsIdsOutput.builder()
-                .availableRoomsIds(List.of("1", "2", "3", "4"))
-                .build();
+        List<UUID> availableRoomIds = bookingRepository
+                .findAvailableRooms(
+                        input.getStartDate(),
+                        input.getEndDate(),
+                        input.getBedCount(),
+                        input.getBedSize() != null ? BedSize.getByCode(input.getBedSize().toString()) : null,
+                        input.getBathroomType() != null ? BathroomType.getByCode(input.getBathroomType().toString()) : null);
+
+        AvailableRoomsIdsOutput output = conversionService.convert(availableRoomIds, AvailableRoomsIdsOutput.class);
 
         log.info("End getIdsOfAvailableRooms output:{}",output);
 

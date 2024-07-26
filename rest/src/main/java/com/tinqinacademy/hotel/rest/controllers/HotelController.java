@@ -45,16 +45,16 @@ public class HotelController {
     public ResponseEntity<?> getIdsOfAvailableRooms(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam Integer bedCount,
-            @RequestParam String bedSize,
-            @RequestParam String bathroomType) {
+            @RequestParam(required = false) Integer bedCount,
+            @RequestParam(required = false) String bedSize,
+            @RequestParam(required = false) String bathroomType) {
 
         GetIdsOfAvailableRoomsInput input = GetIdsOfAvailableRoomsInput.builder()
                 .startDate(startDate)
                 .endDate(endDate)
                 .bedCount(bedCount)
-                .bedSize(BedSize.getByCode(bedSize))
-                .bathroomType(BathroomType.getByCode(bathroomType))
+                .bedSize(bedSize != null ? BedSize.getByCode(bedSize) : null)
+                .bathroomType(bathroomType != null ? BathroomType.getByCode(bathroomType) : null)
                 .build();
 
         AvailableRoomsIdsOutput output = hotelService.getIdsOfAvailableRooms(input);

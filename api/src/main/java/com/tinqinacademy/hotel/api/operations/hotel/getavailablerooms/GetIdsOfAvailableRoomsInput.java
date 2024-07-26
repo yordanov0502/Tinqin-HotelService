@@ -23,8 +23,6 @@ public class GetIdsOfAvailableRoomsInput {
     private LocalDate endDate;
     @Positive
     private Integer bedCount;
-    @NotNull
     private BedSize bedSize;
-    @NotNull
     private BathroomType bathroomType;
 }
