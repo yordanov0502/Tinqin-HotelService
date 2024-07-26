@@ -49,7 +49,7 @@ public class Guest {
     private LocalDate idCardValidity;
 
     @CreationTimestamp
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

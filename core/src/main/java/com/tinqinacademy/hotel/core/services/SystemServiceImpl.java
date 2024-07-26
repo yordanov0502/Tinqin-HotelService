@@ -148,13 +148,12 @@ public class SystemServiceImpl implements SystemService {
 
         log.info("Start updateRoom input:{}", input);
 
-        Room currRoom = roomRepository
+        roomRepository
                 .findById(UUID.fromString(input.getRoomId()))
                 .orElseThrow(() -> new NotFoundException("Room with id[" + input.getRoomId() + "] doesn't exist."));
 
         List<Bed> bedList = findBeds(BedSize.getByCode(input.getBedSize().getCode()), input.getBedCount());
         Room room = conversionService.convert(input, Room.RoomBuilder.class)
-                .createdAt(currRoom.getCreatedAt())
                 .beds(bedList)
                 .build();
         Room updatedRoom = roomRepository.save(room);
