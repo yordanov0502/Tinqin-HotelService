@@ -148,9 +148,7 @@ public class SystemServiceImpl implements SystemService {
 
         log.info("Start updateRoom input:{}", input);
 
-        roomRepository
-                .findById(UUID.fromString(input.getRoomId()))
-                .orElseThrow(() -> new NotFoundException("Room with id[" + input.getRoomId() + "] doesn't exist."));
+        if(!isRoomExists(input.getRoomId())) {throw new NotFoundException("Room with id[" + input.getRoomId() + "] doesn't exist.");}
 
         List<Bed> bedList = findBeds(BedSize.getByCode(input.getBedSize().getCode()), input.getBedCount());
         Room room = conversionService.convert(input, Room.RoomBuilder.class)
@@ -169,19 +167,13 @@ public class SystemServiceImpl implements SystemService {
 
         log.info("Start updateRoomPartially input:{}", input);
 
-        Room currentRoom = roomRepository
-                .findById(UUID.fromString(input.getRoomId()))
-                .orElseThrow(() -> new NotFoundException("Room with id[" + input.getRoomId() + "] doesn't exist."));
+        Room currentRoom = findRoomById(input.getRoomId());
 
-        int numberOfBedsToAdd =
-                input.getBedCount() != null
-                        ? input.getBedCount()
-                        : currentRoom.getBeds().size();
+        int numberOfBedsToAdd = input.getBedCount() != null ? input.getBedCount() : currentRoom.getBeds().size();
 
         Bed bedToAdd = currentRoom.getBeds().getFirst();
         if(input.getBedSize() != null){
-            bedToAdd = bedRepository.findByBedSize(BedSize.getByCode(input.getBedSize().toString()))
-                    .orElseThrow(() -> new NotFoundException("Bed doesn't exist (UNKNOWN bedSize)."));
+            bedToAdd = findBedByBedSize(BedSize.getByCode(input.getBedSize().toString()));
         }
 
         Room newRoom = conversionService.convert(input, Room.class);
@@ -218,9 +210,7 @@ public class SystemServiceImpl implements SystemService {
 
         log.info("Start deleteRoom input:{}", input);
 
-        Room room = roomRepository
-                .findById(UUID.fromString(input.getRoomId()))
-                .orElseThrow(() -> new NotFoundException("Room with id[" + input.getRoomId() + "] doesn't exist."));
+        Room room = findRoomById(input.getRoomId());
 
         boolean isRoomBooked = bookingRepository
                 .findAllByRoomId(room.getId())
@@ -241,15 +231,59 @@ public class SystemServiceImpl implements SystemService {
         return output;
     }
 
+    private boolean isRoomExists (String roomId) {
 
-    private List<Bed> findBeds(BedSize bedSize, Integer bedCount) {
+        log.info("Start isRoomExists input:{}", roomId);
+
+        boolean isRoomExists = roomRepository.existsById(UUID.fromString(roomId));
+
+        log.info("End isRoomExists output:{}", isRoomExists);
+
+        return isRoomExists;
+    }
+
+    private Room findRoomById(String roomId) {
+
+        log.info("Start findRoomById input:{}", roomId);
+
+        Room room = roomRepository
+                .findById(UUID.fromString(roomId))
+                .orElseThrow(() -> new NotFoundException("Room with id[" + roomId + "] doesn't exist."));
+
+        log.info("End findRoomById output:{}", room);
+
+        return room;
+    }
+
+    private Bed findBedByBedSize(BedSize bedSize) {
+
+        log.info("Start findBedByBedSize input:{}",bedSize);
+
         Bed bed = bedRepository
-                .findByBedSize(BedSize.getByCode(bedSize.toString()))
+                .findByBedSize(bedSize)
                 .orElseThrow(() -> new NotFoundException("Bed doesn't exist (UNKNOWN bedSize)."));
 
-        return IntStream.range(0, bedCount)
+        log.info("End findBedByBedSize output:{}",bed);
+
+        return bed;
+    }
+
+    private List<Bed> findBeds(BedSize bedSize, Integer bedCount) {
+
+        log.info("Start findBeds bedsize:{}, bedCount:{}",bedSize, bedCount);
+
+        Bed bed = bedRepository
+                .findByBedSize(bedSize)
+                .orElseThrow(() -> new NotFoundException("Bed doesn't exist (UNKNOWN bedSize)."));
+
+        List<Bed> bedList = IntStream
+                .range(0, bedCount)
                 .mapToObj(i -> bed)
                 .toList();
+
+        log.info("End findBeds output:{}",bedList);
+
+        return bedList;
     }
 
 }
