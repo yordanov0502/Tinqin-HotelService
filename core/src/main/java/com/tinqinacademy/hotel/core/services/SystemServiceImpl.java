@@ -211,15 +211,7 @@ public class SystemServiceImpl implements SystemService {
         log.info("Start deleteRoom input:{}", input);
 
         Room room = findRoomById(input.getRoomId());
-
-        boolean isRoomBooked = bookingRepository
-                .findAllByRoomId(room.getId())
-                .stream()
-                .anyMatch(booking -> !LocalDate.now().isAfter(booking.getEndDate()));
-
-        if(isRoomBooked){
-            throw new BookedRoomException("Room with id[" + room.getId().toString() + "] cannot be deleted, because it is booked.");
-        }
+        checkIfRoomIsBooked(room.getId());
 
         bookingRepository.setRoomToNullForBookingsByRoomId(room.getId());
         roomRepository.delete(room);
@@ -270,7 +262,7 @@ public class SystemServiceImpl implements SystemService {
 
     private List<Bed> findBeds(BedSize bedSize, Integer bedCount) {
 
-        log.info("Start findBeds bedsize:{}, bedCount:{}",bedSize, bedCount);
+        log.info("Start findBeds input:{},{}",bedSize, bedCount);
 
         Bed bed = bedRepository
                 .findByBedSize(bedSize)
@@ -284,6 +276,22 @@ public class SystemServiceImpl implements SystemService {
         log.info("End findBeds output:{}",bedList);
 
         return bedList;
+    }
+
+    private void checkIfRoomIsBooked(UUID roomId) {
+
+        log.info("Start checkIfRoomIsBooked input:{}",roomId);
+
+        boolean isRoomBooked = bookingRepository
+                .findAllByRoomId(roomId)
+                .stream()
+                .anyMatch(booking -> !LocalDate.now().isAfter(booking.getEndDate()));
+
+        if(isRoomBooked){
+            throw new BookedRoomException("Room with id[" + roomId.toString() + "] cannot be deleted, because it is booked.");
+        }
+
+        log.info("End checkIfRoomIsBooked.");
     }
 
 }
