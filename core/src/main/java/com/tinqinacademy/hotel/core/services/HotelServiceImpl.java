@@ -28,6 +28,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,9 +67,7 @@ public class HotelServiceImpl implements HotelService {
 
         log.info("Start getRoomInfo input:{}",input);
 
-        Room room = roomRepository
-                .findById(UUID.fromString(input.getRoomId()))
-                .orElseThrow(() -> new NotFoundException("Room with id["+input.getRoomId()+"] doesn't exist."));
+        Room room = findRoomById(input.getRoomId());
 
         List<BookedInterval> roomBookedIntervals = bookingRepository
                 .findAllBookedIntervalsByRoomId(room.getId())
@@ -91,31 +90,13 @@ public class HotelServiceImpl implements HotelService {
 
         log.info("Start bookRoom input:{}",input);
 
-        if(input.getStartDate().isEqual(input.getEndDate())){
-            throw new BookingDatesException("Start date and end date of booking cannot be equal.");
-        }
-        if(input.getStartDate().isAfter(input.getEndDate())){
-            throw new BookingDatesException("Start date cannot be after the end date.");
-        }
+        validateDates(input.getStartDate(),input.getEndDate());
 
-        Room room = roomRepository
-                .findById(UUID.fromString(input.getRoomId()))
-                .orElseThrow(() -> new NotFoundException("Room with id[" + input.getRoomId() + "] doesn't exist."));
+        Room room = findRoomById(input.getRoomId());
 
-        User user = userRepository
-                .findByFirstNameAndLastNameAndPhoneNumber(
-                        input.getFirstName(),
-                        input.getLastName(),
-                        input.getPhoneNumber())
-                .orElseThrow(() -> new NotFoundException("User with name: " +
-                        input.getFirstName() +" "+
-                        input.getLastName() + " and phone number: "+
-                        input.getPhoneNumber() + " doesn't exist."));
+        User user = findUserByFirstAndLastNameAndPhone(input.getFirstName(),input.getLastName(),input.getPhoneNumber());
 
-        if(bookingRepository.isRoomBooked(room.getId(),input.getStartDate(),input.getEndDate())){
-            throw new BookedRoomException("Room with id["+room.getId()+"] is not available " +
-                    "for ["+input.getStartDate()+"/"+input.getEndDate()+"].");
-        }
+        checkRoomAvailability(room.getId(),input.getStartDate(),input.getEndDate());
 
         long days = input.getEndDate().toEpochDay() - input.getStartDate().toEpochDay();
         BigDecimal priceOfBooking = room.getPrice().multiply(BigDecimal.valueOf(days));
@@ -139,9 +120,7 @@ public class HotelServiceImpl implements HotelService {
 
         log.info("Start unbookRoom input:{}",input);
 
-        Booking booking = bookingRepository
-                .findById(UUID.fromString(input.getBookingId()))
-                .orElseThrow(() -> new NotFoundException("Booking with id["+input.getBookingId()+"] doesn't exist."));
+        Booking booking = findBookingById(input.getBookingId());
 
         bookingRepository.delete(booking);
 
@@ -152,7 +131,74 @@ public class HotelServiceImpl implements HotelService {
         return output;
     }
 
+    private Room findRoomById(String roomId) {
 
+        log.info("Start findRoomById input:{}", roomId);
 
+        Room room = roomRepository
+                .findById(UUID.fromString(roomId))
+                .orElseThrow(() -> new NotFoundException("Room with id[" + roomId + "] doesn't exist."));
+
+        log.info("End findRoomById output:{}", room.toString());
+
+        return room;
+    }
+
+    private void validateDates(LocalDate startDate, LocalDate endDate) {
+
+        log.info("Start validateDates input:{},{}", startDate, endDate);
+
+        if(startDate.isEqual(endDate)) {
+            throw new BookingDatesException("Start date and end date of booking cannot be equal.");
+        }
+        if(startDate.isAfter(endDate)) {
+            throw new BookingDatesException("Start date cannot be after the end date.");
+        }
+
+        log.info("End validateDates.");
+    }
+
+    private void checkRoomAvailability(UUID roomId, LocalDate startDate, LocalDate endDate) {
+
+        log.info("Start checkRoomAvailability input:{},{},{}", roomId, startDate, endDate);
+
+        if(bookingRepository.isRoomBooked(roomId,startDate,endDate)){
+            throw new BookedRoomException("Room with id["+roomId+"] is not available for ["+startDate+"/"+endDate+"].");
+        }
+
+        log.info("End checkRoomAvailability.");
+    }
+
+    private User findUserByFirstAndLastNameAndPhone(String firstName, String lastName, String phoneNumber) {
+
+        log.info("Start findUserByFirstAndLastNameAndPhone input:{},{},{}", firstName, lastName, phoneNumber);
+
+        User user = userRepository
+                .findByFirstNameAndLastNameAndPhoneNumber(
+                        firstName,
+                        lastName,
+                        phoneNumber)
+                .orElseThrow(() -> new NotFoundException("User with name: " +
+                        firstName +" "+
+                        lastName + " and phone number: "+
+                        phoneNumber + " doesn't exist."));
+
+        log.info("End findUserByFirstAndLastNameAndPhone output:{}", user.toString());
+
+        return user;
+    }
+
+    private Booking findBookingById(String bookingId) {
+
+        log.info("Start findBookingById input:{}", bookingId);
+
+        Booking booking = bookingRepository
+                .findById(UUID.fromString(bookingId))
+                .orElseThrow(() -> new NotFoundException("Booking with id["+bookingId+"] doesn't exist."));
+
+        log.info("End findBookingById input:{}", booking.toString());
+
+        return booking;
+    }
 
 }
