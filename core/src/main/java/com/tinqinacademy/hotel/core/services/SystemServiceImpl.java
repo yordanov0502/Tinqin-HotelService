@@ -12,7 +12,6 @@ import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
-import com.tinqinacademy.hotel.api.operations.system.getvisitors.content.VisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.VisitorInput;
@@ -114,6 +113,16 @@ public class SystemServiceImpl implements SystemService {
         value.ifPresent(v -> predicates.add(function.apply(v)));
     }
 
+    private boolean matchesCriteria(Guest guest, GetVisitorsInput input) {
+        return (input.getFirstName().isEmpty() || input.getFirstName().get().equals(guest.getFirstName())) &&
+                (input.getLastName().isEmpty() || input.getLastName().get().equals(guest.getLastName())) &&
+                (input.getPhoneNumber().isEmpty() || input.getPhoneNumber().get().equals(guest.getPhoneNumber())) &&
+                (input.getIdCardNumber().isEmpty() || input.getIdCardNumber().get().equals(guest.getIdCardNumber())) &&
+                (input.getIdCardValidity().isEmpty() || input.getIdCardValidity().get().equals(guest.getIdCardValidity())) &&
+                (input.getIdCardIssueAuthority().isEmpty() || input.getIdCardIssueAuthority().get().equals(guest.getIdCardIssueAuthority())) &&
+                (input.getIdCardIssueDate().isEmpty() || input.getIdCardIssueDate().get().equals(guest.getIdCardIssueDate()));
+    }
+
     @Override
     public GetVisitorsOutput getVisitors(GetVisitorsInput input) {
         log.info("Start getVisitors input:{}", input);
@@ -133,13 +142,28 @@ public class SystemServiceImpl implements SystemService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        addPredicateIfPresent(predicates, Optional.of(input.getStartDate()), date -> cb.greaterThanOrEqualTo(booking.get("startDate"),date) );
-        addPredicateIfPresent(predicates, Optional.of(input.getEndDate()), date -> cb.lessThanOrEqualTo(booking.get("endDate"),date) );
-
+        addPredicateIfPresent(predicates, Optional.of(input.getStartDate()), startDate -> cb.greaterThanOrEqualTo(booking.get("startDate"),startDate) );
+        addPredicateIfPresent(predicates, Optional.of(input.getEndDate()), endDate -> cb.lessThanOrEqualTo(booking.get("endDate"),endDate) );
+        addPredicateIfPresent(predicates, input.getFirstName(), firstName -> cb.equal(guest.get("firstName"),firstName));
+        addPredicateIfPresent(predicates, input.getLastName(), lastName -> cb.equal(guest.get("lastName"),lastName));
+        addPredicateIfPresent(predicates, input.getPhoneNumber(), phoneNumber -> cb.equal(guest.get("phoneNumber"),phoneNumber));
+        addPredicateIfPresent(predicates, input.getIdCardNumber(), idCardNumber -> cb.equal(guest.get("idCardNumber"),idCardNumber));
+        addPredicateIfPresent(predicates, input.getIdCardValidity(), idCardValidity -> cb.equal(guest.get("idCardValidity"),idCardValidity));
+        addPredicateIfPresent(predicates, input.getIdCardIssueAuthority(), idCardAuthority -> cb.equal(guest.get("idCardIssueAuthority"),idCardAuthority));
+        addPredicateIfPresent(predicates, input.getIdCardIssueDate(), idCardIssueDate -> cb.equal(guest.get("idCardIssueDate"),idCardIssueDate));
+        addPredicateIfPresent(predicates, input.getRoomNumber(), roomNumber -> cb.equal(room.get("roomNumber"),roomNumber));
 
         query.where(cb.and(predicates.toArray(new Predicate[0])));
 
         List<Booking> bookingList = entityManager.createQuery(query).getResultList();
+
+        for (Booking b : bookingList) {
+            List<Guest> filteredGuests = b.getGuests()
+                    .stream()
+                    .filter(g -> matchesCriteria(g, input))
+                    .collect(Collectors.toList());
+            b.setGuests(filteredGuests);
+        }
 
         GetVisitorsOutput output = conversionService.convert(bookingList,GetVisitorsOutput.class);
 

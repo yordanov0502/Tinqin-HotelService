@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,13 +61,14 @@ public class SystemController {
     public ResponseEntity<?> getVisitors(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam(required = false) String firstName,
-            @RequestParam(required = false) String lastName,
-            @RequestParam(required = false) String idCardNumber,
-            @RequestParam(required = false) LocalDate idCardValidity,
-            @RequestParam(required = false) String idCardIssueAuthority,
-            @RequestParam(required = false) LocalDate idCardIssueDate,
-            @RequestParam(required = false) String roomNumber
+            @RequestParam(required = false) Optional<String> firstName,
+            @RequestParam(required = false) Optional<String> lastName,
+            @RequestParam(required = false) Optional<String> phoneNumber,
+            @RequestParam(required = false) Optional<String> idCardNumber,
+            @RequestParam(required = false) Optional<LocalDate> idCardValidity,
+            @RequestParam(required = false) Optional<String> idCardIssueAuthority,
+            @RequestParam(required = false) Optional<LocalDate> idCardIssueDate,
+            @RequestParam(required = false) Optional<String> roomNumber
     ) {
 
         GetVisitorsInput input = GetVisitorsInput.builder()
@@ -74,6 +76,7 @@ public class SystemController {
                 .endDate(endDate)
                 .firstName(firstName)
                 .lastName(lastName)
+                .phoneNumber(phoneNumber)
                 .idCardNumber(idCardNumber)
                 .idCardValidity(idCardValidity)
                 .idCardIssueAuthority(idCardIssueAuthority)
