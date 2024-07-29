@@ -20,7 +20,7 @@ public class UpdateRoomPartiallyInputToRoom extends BaseConverter<UpdateRoomPart
     protected Room convertObj(UpdateRoomPartiallyInput input) {
         Room room = Room.builder()
                 .id(UUID.fromString(input.getRoomId()))
-                .roomNo(input.getRoomNo())
+                .roomNumber(input.getRoomNo())
                 .floor(input.getFloor())
                 .price(input.getPrice())
                 .bathroomType(input.getBathroomType() == null

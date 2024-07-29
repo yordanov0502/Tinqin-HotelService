@@ -3,6 +3,7 @@ package com.tinqinacademy.hotel.api.operations.hotel.getroom;
 
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.content.BookedInterval;
 import lombok.*;
 
 import java.math.BigDecimal;

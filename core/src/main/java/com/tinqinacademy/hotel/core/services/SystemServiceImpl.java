@@ -6,22 +6,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
-import com.tinqinacademy.hotel.api.operations.system.getvisitors.VisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
+import com.tinqinacademy.hotel.api.operations.system.getvisitors.content.VisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
-import com.tinqinacademy.hotel.api.operations.system.registervisitor.VisitorInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.VisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOutput;
 import com.tinqinacademy.hotel.api.services.SystemService;
 import com.tinqinacademy.hotel.core.exception.exceptions.BookedRoomException;
+import com.tinqinacademy.hotel.core.exception.exceptions.BookingDatesException;
 import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
 import com.tinqinacademy.hotel.persistence.model.entity.Bed;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
@@ -32,6 +33,7 @@ import com.tinqinacademy.hotel.persistence.repository.BedRepository;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repository.GuestRepository;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
@@ -54,6 +56,7 @@ public class SystemServiceImpl implements SystemService {
     private final GuestRepository guestRepository;
     private final ConversionService conversionService;
     private final ObjectMapper objectMapper;
+    private final EntityManager entityManager;
 
     @Transactional
     @Override
@@ -104,22 +107,53 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
-    public GetVisitorsOutput getVisitors(GetVisitorsInput input) { //? optional
-
+    public GetVisitorsOutput getVisitors(GetVisitorsInput input) {
         log.info("Start getVisitors input:{}", input);
 
+        if(input.getStartDate().isEqual(input.getEndDate())){
+            throw new BookingDatesException("Start date and end date of booking cannot be equal.");
+        }
+        if(input.getStartDate().isAfter(input.getEndDate())){
+            throw new BookingDatesException("Start date cannot be after the end date.");
+        }
+
+        List<Booking> bookingList = bookingRepository.findAllByVariousCriteria(
+                input.getStartDate(),
+                input.getEndDate(),
+                input.getFirstName(),
+                input.getLastName(),
+                input.getPhoneNumber(),
+                input.getIdCardNumber(),
+                input.getIdCardValidity(),
+                input.getIdCardIssueAuthority(),
+                input.getIdCardIssueDate(),
+                input.getRoomNumber()
+        );
+
+        List<VisitorOutput> visitorOutputs = new ArrayList<>();
+        for(Booking booking: bookingList){
+            for(Guest guest: booking.getGuests()){
+                if(input.getFirstName() != null && !input.getFirstName().equals(guest.getFirstName())) {continue;}
+                if(input.getLastName() != null && !input.getLastName().equals(guest.getLastName())) {continue;}
+                if(input.getPhoneNumber() != null && !input.getPhoneNumber().equals(guest.getPhoneNumber())) {continue;}
+                if(input.getIdCardNumber() != null && !input.getIdCardNumber().equals(guest.getIdCardNumber())) {continue;}
+                if(input.getIdCardValidity() != null && !input.getIdCardValidity().equals(guest.getIdCardValidity())) {continue;}
+                if(input.getIdCardIssueAuthority() != null && !input.getIdCardIssueAuthority().equals(guest.getIdCardIssueAuthority())) {continue;}
+                if(input.getIdCardIssueDate() != null && !input.getIdCardIssueDate().equals(guest.getIdCardIssueDate())) {continue;}
+
+                VisitorOutput visitorOutput = conversionService.convert(guest, VisitorOutput.VisitorOutputBuilder.class)
+                        .phoneNumber(guest.getPhoneNumber())
+                        .startDate(booking.getStartDate())
+                        .endDate(booking.getEndDate())
+                        .roomNumber(booking.getRoom().getRoomNumber())
+                        .build();
+
+                visitorOutputs.add(visitorOutput);
+            }
+        }
+
         GetVisitorsOutput output = GetVisitorsOutput.builder()
-                .visitorInputList(List.of(
-                        VisitorOutput.builder()
-                                .startDate(input.getStartDate())
-                                .endDate(input.getEndDate())
-                                .firstName(input.getFirstName())
-                                .lastName(input.getLastName())
-                                .idCardNumber(input.getIdCardNumber())
-                                .idCardValidity(input.getIdCardValidity())
-                                .idCardIssueAuthority(input.getIdCardIssueAuthority())
-                                .idCardIssueDate(input.getIdCardIssueDate())
-                                .build()))
+                .visitorOutputList(visitorOutputs)
                 .build();
 
         log.info("End getVisitors output:{}", output);
@@ -230,6 +264,17 @@ public class SystemServiceImpl implements SystemService {
         boolean isRoomExists = roomRepository.existsById(UUID.fromString(roomId));
 
         log.info("End isRoomExists output:{}", isRoomExists);
+
+        return isRoomExists;
+    }
+
+    private boolean isRoomWithNumberExists(String roomNumber) {
+
+        log.info("Start isRoomWithNumberExists input:{}", roomNumber);
+
+        boolean isRoomExists = roomRepository.existsByRoomNumber(roomNumber);
+
+        log.info("End isRoomWithNumberExists output:{}", isRoomExists);
 
         return isRoomExists;
     }

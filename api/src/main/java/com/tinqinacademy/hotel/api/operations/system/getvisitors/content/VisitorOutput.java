@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.api.operations.system.getvisitors;
+package com.tinqinacademy.hotel.api.operations.system.getvisitors.content;
 
 import lombok.*;
 
@@ -20,5 +20,5 @@ public class VisitorOutput {
     private LocalDate idCardValidity;
     private String idCardIssueAuthority;
     private LocalDate idCardIssueDate;
-    //TODO: Room which was occupied by the visitor
+    private String roomNumber;
 }

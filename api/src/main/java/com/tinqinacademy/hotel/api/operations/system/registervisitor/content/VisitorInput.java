@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.api.operations.system.registervisitor;
+package com.tinqinacademy.hotel.api.operations.system.registervisitor.content;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

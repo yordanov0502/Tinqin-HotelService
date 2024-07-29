@@ -20,7 +20,7 @@ public class UpdateRoomInputToRoom extends BaseConverter<UpdateRoomInput, Room.R
 
         Room.RoomBuilder roomBuilder = Room.builder()
                 .id(UUID.fromString(input.getRoomId()))
-                .roomNo(input.getRoomNo())
+                .roomNumber(input.getRoomNo())
                 .floor(input.getFloor())
                 .price(input.getPrice())
                 .bathroomType(BathroomType.getByCode(input.getBathroomType().toString()));

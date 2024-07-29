@@ -28,8 +28,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "room_no", nullable = false, unique = true, length = 10)
-    private String roomNo;
+    @Column(name = "room_number", nullable = false, unique = true, length = 10)
+    private String roomNumber;
 
     @Column(name = "floor", nullable = false)
     private Integer floor;

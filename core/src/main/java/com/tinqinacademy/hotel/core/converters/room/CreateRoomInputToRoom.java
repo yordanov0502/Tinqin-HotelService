@@ -17,7 +17,7 @@ public class CreateRoomInputToRoom extends BaseConverter<CreateRoomInput, Room.R
     protected Room.RoomBuilder convertObj(CreateRoomInput input) {
 
         Room.RoomBuilder roomBuilder = Room.builder()
-                .roomNo(input.getRoomNo())
+                .roomNumber(input.getRoomNo())
                 .floor(input.getFloor())
                 .price(input.getPrice())
                 .bathroomType(BathroomType.getByCode(input.getBathroomType().toString()));

@@ -7,7 +7,7 @@ import com.tinqinacademy.hotel.api.model.enums.BedSize;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
-import com.tinqinacademy.hotel.api.operations.system.registervisitor.VisitorInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.VisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
 import org.junit.jupiter.api.Test;

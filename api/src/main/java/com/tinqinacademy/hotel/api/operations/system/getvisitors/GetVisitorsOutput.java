@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.system.getvisitors;
 
 
+import com.tinqinacademy.hotel.api.operations.system.getvisitors.content.VisitorOutput;
 import lombok.*;
 
 import java.util.List;
@@ -12,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetVisitorsOutput {
-    private List<VisitorOutput> visitorInputList;
+    private List<VisitorOutput> visitorOutputList;
 }

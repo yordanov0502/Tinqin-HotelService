@@ -3,7 +3,7 @@ package com.tinqinacademy.hotel.persistence.repository;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import com.tinqinacademy.hotel.persistence.model.enums.BathroomType;
 import com.tinqinacademy.hotel.persistence.model.enums.BedSize;
-import com.tinqinacademy.hotel.persistence.model.other.BookedInterval;
+import com.tinqinacademy.hotel.persistence.model.content.BookedInterval;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -37,7 +37,7 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             "(:startDate < b.startDate AND :endDate > b.endDate))")
     boolean isRoomBooked(@Param("roomId") UUID roomId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("select new com.tinqinacademy.hotel.persistence.model.other.BookedInterval(b.startDate, b.endDate) " +
+    @Query("select new com.tinqinacademy.hotel.persistence.model.content.BookedInterval(b.startDate, b.endDate) " +
             "from Booking b where b.room.id = :roomId")
     List<BookedInterval> findAllBookedIntervalsByRoomId(@Param("roomId") UUID roomId);
 
@@ -52,8 +52,7 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             "        (b.endDate >= :startDate AND b.endDate <= :endDate) OR " +
             "        (b.startDate <= :startDate AND b.endDate >= :endDate)" +
             "    )" +
-            ")"
-    )
+            ")")
     List<UUID> findAvailableRooms(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
@@ -61,4 +60,29 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             @Param("bedSize") BedSize bedSize,
             @Param("bathroomType") BathroomType bathroomType
     );
+
+    @Query("SELECT b from Booking b " +
+            "JOIN b.guests g " +
+            "JOIN b.room r " +
+            "JOIN b.user u " +
+            "WHERE (:startDate <= b.startDate AND :endDate >= b.endDate) " +
+            "AND (:firstName IS NULL OR g.firstName = :firstName) " +
+            "AND (:lastName IS NULL OR g.lastName = :lastName) " +
+            "AND (:phoneNumber IS NULL OR g.phoneNumber = :phoneNumber) " +
+            "AND (:idCardNumber IS NULL OR g.idCardNumber = :idCardNumber) " +
+            "AND (:idCardValidity IS NULL OR g.idCardValidity = :idCardValidity) " +
+            "AND (:idCardIssueAuthority IS NULL OR g.idCardIssueAuthority = :idCardIssueAuthority) " +
+            "AND (:idCardIssueDate IS NULL OR g.idCardIssueDate = :idCardIssueDate) " +
+            "AND (:roomNumber IS NULL OR r.roomNumber = :roomNumber)")
+    List<Booking> findAllByVariousCriteria(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("firstName") String firstName,
+            @Param("lastName") String lastName,
+            @Param("phoneNumber") String phoneNumber,
+            @Param("idCardNumber") String idCardNumber,
+            @Param("idCardValidity") LocalDate idCardValidity,
+            @Param("idCardIssueAuthority") String idCardIssueAuthority,
+            @Param("idCardIssueDate") LocalDate idCardIssueDate,
+            @Param("roomNumber") String roomNumber);
 }

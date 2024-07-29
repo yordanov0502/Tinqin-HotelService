@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.system.registervisitor;
 
 
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.VisitorInput;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
