@@ -60,29 +60,4 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
             @Param("bedSize") BedSize bedSize,
             @Param("bathroomType") BathroomType bathroomType
     );
-
-    @Query("SELECT b from Booking b " +
-            "JOIN b.guests g " +
-            "JOIN b.room r " +
-            "JOIN b.user u " +
-            "WHERE (:startDate <= b.startDate AND :endDate >= b.endDate) " +
-            "AND (:firstName IS NULL OR g.firstName = :firstName) " +
-            "AND (:lastName IS NULL OR g.lastName = :lastName) " +
-            "AND (:phoneNumber IS NULL OR g.phoneNumber = :phoneNumber) " +
-            "AND (:idCardNumber IS NULL OR g.idCardNumber = :idCardNumber) " +
-            "AND (:idCardValidity IS NULL OR g.idCardValidity = :idCardValidity) " +
-            "AND (:idCardIssueAuthority IS NULL OR g.idCardIssueAuthority = :idCardIssueAuthority) " +
-            "AND (:idCardIssueDate IS NULL OR g.idCardIssueDate = :idCardIssueDate) " +
-            "AND (:roomNumber IS NULL OR r.roomNumber = :roomNumber)")
-    List<Booking> findAllByVariousCriteria(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("firstName") String firstName,
-            @Param("lastName") String lastName,
-            @Param("phoneNumber") String phoneNumber,
-            @Param("idCardNumber") String idCardNumber,
-            @Param("idCardValidity") LocalDate idCardValidity,
-            @Param("idCardIssueAuthority") String idCardIssueAuthority,
-            @Param("idCardIssueDate") LocalDate idCardIssueDate,
-            @Param("roomNumber") String roomNumber);
 }
