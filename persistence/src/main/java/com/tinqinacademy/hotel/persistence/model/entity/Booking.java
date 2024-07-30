@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Builder(toBuilder = true)
@@ -60,5 +60,5 @@ public class Booking {
             inverseJoinColumns = @JoinColumn(name = "guest_id")
     )
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Guest> guests;
+    private Set<Guest> guests;
 }

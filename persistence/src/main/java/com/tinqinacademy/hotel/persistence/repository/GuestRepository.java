@@ -9,5 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface GuestRepository extends JpaRepository<Guest, UUID> {
+    boolean existsByPhoneNumber(String phoneNumber);
     List<Guest> findAllByIdCardNumberIn(List<String> idCardNumbers);
 }
