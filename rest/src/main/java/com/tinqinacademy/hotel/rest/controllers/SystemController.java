@@ -1,7 +1,9 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
+import com.tinqinacademy.hotel.api.error.Error;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
@@ -18,6 +20,7 @@ import com.tinqinacademy.hotel.api.RestApiRoutes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.vavr.control.Either;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +35,7 @@ import java.util.Optional;
 public class SystemController {
 
     private final SystemService systemService;
+    private final CreateRoomOperation createRoomOperation;
 
     @Operation(summary = "Register visitors.",
             description = "Register visitors as room renters.")
@@ -101,8 +105,14 @@ public class SystemController {
     @PostMapping(RestApiRoutes.CREATE_ROOM)
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomInput input) {
 
-        CreateRoomOutput output = systemService.createRoom(input);
-        return new ResponseEntity<>(output,HttpStatus.CREATED);
+        Either<Error,CreateRoomOutput> either = createRoomOperation.process(input);
+
+        if(either.isRight()) {
+            return new ResponseEntity<>(either.get(),HttpStatus.CREATED);
+        }
+        else{
+            return new ResponseEntity<>(either.getLeft().getErrMsg(),either.getLeft().getHttpStatus());
+        }
     }
 
 

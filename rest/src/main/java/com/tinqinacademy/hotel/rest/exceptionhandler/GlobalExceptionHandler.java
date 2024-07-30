@@ -29,33 +29,33 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorsWrapper.getErrorList(),errorsWrapper.getHttpStatus());
     }
 
-    @ExceptionHandler({NotFoundException.class})
-    public ResponseEntity<?> handleNotFoundException(NotFoundException exception){
+//    @ExceptionHandler({NotFoundException.class})
+//    public ResponseEntity<?> handleNotFoundException(NotFoundException exception){
+//
+//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+//    }
 
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-    }
+//    @ExceptionHandler({BookedRoomException.class})
+//    public ResponseEntity<?> handleBookedRoomException(BookedRoomException exception){
+//
+//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+//    }
 
-    @ExceptionHandler({BookedRoomException.class})
-    public ResponseEntity<?> handleBookedRoomException(BookedRoomException exception){
+//    @ExceptionHandler({BookingDatesException.class})
+//    public ResponseEntity<?> handleBookingDatesException(BookingDatesException exception){
+//
+//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+//    }
 
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler({DuplicateValueException.class})
+//    public ResponseEntity<?> handleDuplicateValueException(DuplicateValueException exception){
+//
+//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+//    }
 
-    @ExceptionHandler({BookingDatesException.class})
-    public ResponseEntity<?> handleBookingDatesException(BookingDatesException exception){
-
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler({DuplicateValueException.class})
-    public ResponseEntity<?> handleDuplicateValueException(DuplicateValueException exception){
-
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler({UnsupportedOperationException.class})
-    public ResponseEntity<?> handleUnsupportedOperationException(UnsupportedOperationException exception){
-
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_IMPLEMENTED);
-    }
+//    @ExceptionHandler({UnsupportedOperationException.class})
+//    public ResponseEntity<?> handleUnsupportedOperationException(UnsupportedOperationException exception){
+//
+//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_IMPLEMENTED);
+//    }
 }

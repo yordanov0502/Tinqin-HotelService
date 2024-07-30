@@ -18,7 +18,6 @@ public interface SystemService {
 
     RegisterVisitorOutput registerVisitors(RegisterVisitorInput input);
     GetVisitorsOutput getVisitors(GetVisitorsInput input);
-    CreateRoomOutput createRoom(CreateRoomInput input);
     UpdateRoomOutput updateRoom(UpdateRoomInput input);
     UpdateRoomPartiallyOutput updateRoomPartially(UpdateRoomPartiallyInput input);
     DeleteRoomOutput deleteRoom(DeleteRoomInput input);
