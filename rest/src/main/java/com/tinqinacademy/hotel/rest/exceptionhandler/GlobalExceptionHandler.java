@@ -4,9 +4,9 @@ import com.tinqinacademy.hotel.core.exception.ErrorService;
 import com.tinqinacademy.hotel.core.exception.ErrorsWrapper;
 import com.tinqinacademy.hotel.core.exception.exceptions.BookedRoomException;
 import com.tinqinacademy.hotel.core.exception.exceptions.BookingDatesException;
+import com.tinqinacademy.hotel.core.exception.exceptions.DuplicateValueException;
 import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -45,6 +45,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleBookingDatesException(BookingDatesException exception){
 
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({DuplicateValueException.class})
+    public ResponseEntity<?> handleDuplicateValueException(DuplicateValueException exception){
+
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({UnsupportedOperationException.class})

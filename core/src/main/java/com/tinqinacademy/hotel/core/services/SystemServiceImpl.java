@@ -22,6 +22,7 @@ import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateR
 import com.tinqinacademy.hotel.api.services.SystemService;
 import com.tinqinacademy.hotel.core.exception.exceptions.BookedRoomException;
 import com.tinqinacademy.hotel.core.exception.exceptions.BookingDatesException;
+import com.tinqinacademy.hotel.core.exception.exceptions.DuplicateValueException;
 import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
 import com.tinqinacademy.hotel.persistence.model.entity.Bed;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
@@ -84,6 +85,7 @@ public class SystemServiceImpl implements SystemService {
                 guest = existingGuestsMap.get(visitor.getIdCardNumber());
             }
             else{
+                checkForExistingPhoneNumber(visitor.getPhoneNumber());
                 guest = conversionService.convert(visitor, Guest.class);
                 guestRepository.save(guest);
             }
@@ -107,6 +109,11 @@ public class SystemServiceImpl implements SystemService {
         return output;
     }
 
+    private void checkForExistingPhoneNumber(String phoneNumber) {
+        if(guestRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new DuplicateValueException("Phone number: "+phoneNumber+" already exists in the database.");
+        }
+    }
 
 
     private <T> void addPredicateIfPresent(List<Predicate> predicates, Optional<T> value, Function<T,Predicate> function) {
@@ -158,10 +165,10 @@ public class SystemServiceImpl implements SystemService {
         List<Booking> bookingList = entityManager.createQuery(query).getResultList();
 
         for (Booking b : bookingList) {
-            List<Guest> filteredGuests = b.getGuests()
+            Set<Guest> filteredGuests = b.getGuests()
                     .stream()
                     .filter(g -> matchesCriteria(g, input))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
             b.setGuests(filteredGuests);
         }
 
@@ -175,6 +182,8 @@ public class SystemServiceImpl implements SystemService {
     @Override
     public CreateRoomOutput createRoom(CreateRoomInput input) {
         log.info("Start createRoom input:{}", input);
+
+        checkForExistingRoomNumber(input.getRoomNo());
 
         List<Bed> bedList = findBeds(BedSize.getByCode(input.getBedSize().getCode()), input.getBedCount());
         Room room = conversionService.convert(input,Room.RoomBuilder.class)
@@ -193,7 +202,8 @@ public class SystemServiceImpl implements SystemService {
 
         log.info("Start updateRoom input:{}", input);
 
-        if(!isRoomExists(input.getRoomId())) {throw new NotFoundException("Room with id[" + input.getRoomId() + "] doesn't exist.");}
+        Room currentRoom = findRoomById(input.getRoomId());
+        if(!currentRoom.getRoomNumber().equals(input.getRoomNo())) {checkForExistingRoomNumber(input.getRoomNo());}
 
         List<Bed> bedList = findBeds(BedSize.getByCode(input.getBedSize().getCode()), input.getBedCount());
         Room room = conversionService.convert(input, Room.RoomBuilder.class)
@@ -213,6 +223,7 @@ public class SystemServiceImpl implements SystemService {
         log.info("Start updateRoomPartially input:{}", input);
 
         Room currentRoom = findRoomById(input.getRoomId());
+        if(!currentRoom.getRoomNumber().equals(input.getRoomNo())) {checkForExistingRoomNumber(input.getRoomNo());}
 
         int numberOfBedsToAdd = input.getBedCount() != null ? input.getBedCount() : currentRoom.getBeds().size();
 
@@ -279,15 +290,15 @@ public class SystemServiceImpl implements SystemService {
         return isRoomExists;
     }
 
-    private boolean isRoomWithNumberExists(String roomNumber) {
+    private void checkForExistingRoomNumber(String roomNumber) {
 
-        log.info("Start isRoomWithNumberExists input:{}", roomNumber);
+        log.info("Start checkForExistingRoomNumber input:{}", roomNumber);
 
-        boolean isRoomExists = roomRepository.existsByRoomNumber(roomNumber);
+        if(roomRepository.existsByRoomNumber(roomNumber)) {
+            throw new DuplicateValueException("Room number: "+roomNumber+" already exists in the database.");
+        }
 
-        log.info("End isRoomWithNumberExists output:{}", isRoomExists);
-
-        return isRoomExists;
+        log.info("End checkForExistingRoomNumber.");
     }
 
     private Room findRoomById(String roomId) {
