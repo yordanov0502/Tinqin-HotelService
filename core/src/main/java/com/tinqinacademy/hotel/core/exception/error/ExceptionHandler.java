@@ -9,7 +9,7 @@ import static io.vavr.API.*;
 import static io.vavr.Predicates.instanceOf;
 
 @Service
-public class ErrorHandler implements ErrorService{
+public class ExceptionHandler implements ExceptionService {
     @Override
     public Error handle(Throwable throwable) {
         return Match(throwable).of(

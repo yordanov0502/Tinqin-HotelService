@@ -1,7 +1,7 @@
 package com.tinqinacademy.hotel.core.operations;
 
 import com.tinqinacademy.hotel.api.error.Error;
-import com.tinqinacademy.hotel.core.exception.error.ErrorService;
+import com.tinqinacademy.hotel.core.exception.error.ExceptionService;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
@@ -33,7 +33,7 @@ public class CreateRoomOperationProcessor implements CreateRoomOperation {
     private final RoomRepository roomRepository;
     private final BedRepository bedRepository;
     private final ConversionService conversionService;
-    private final ErrorService errorService;
+    private final ExceptionService exceptionService;
 
 
     @Override
@@ -57,7 +57,7 @@ public class CreateRoomOperationProcessor implements CreateRoomOperation {
 
             return output;})
                 .toEither()
-                .mapLeft(errorService::handle);
+                .mapLeft(exceptionService::handle);
 
         return either;
     }

@@ -4,7 +4,7 @@ import com.tinqinacademy.hotel.api.error.Error;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
-import com.tinqinacademy.hotel.core.exception.error.ErrorService;
+import com.tinqinacademy.hotel.core.exception.error.ExceptionService;
 import com.tinqinacademy.hotel.core.exception.exceptions.DuplicateValueException;
 import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
@@ -33,7 +33,7 @@ public class UpdateRoomOperationProcessor implements UpdateRoomOperation {
     private final RoomRepository roomRepository;
     private final BedRepository bedRepository;
     private final ConversionService conversionService;
-    private final ErrorService errorService;
+    private final ExceptionService exceptionService;
 
     @Override
     public Either<Error, UpdateRoomOutput> process(UpdateRoomInput input) {
@@ -55,7 +55,7 @@ public class UpdateRoomOperationProcessor implements UpdateRoomOperation {
             log.info(String.format("End %s %s output: %s", className,LoggingUtils.getMethodName(),output));
             return output;})
                 .toEither()
-                .mapLeft(errorService::handle);
+                .mapLeft(exceptionService::handle);
 
         return either;
     }
