@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class BookedRoomException extends RuntimeException{
 
-    private HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
     public BookedRoomException(String message) {super(message);}
 }

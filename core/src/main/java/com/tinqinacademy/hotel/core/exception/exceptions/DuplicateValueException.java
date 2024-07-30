@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class DuplicateValueException extends RuntimeException {
 
-    private HttpStatus httpStatus = HttpStatus.CONFLICT;
+    private final HttpStatus httpStatus = HttpStatus.CONFLICT;
 
     public DuplicateValueException(String message) {super(message);}
 }

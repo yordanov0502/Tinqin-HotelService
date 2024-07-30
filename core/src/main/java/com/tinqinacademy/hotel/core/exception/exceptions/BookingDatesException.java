@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class BookingDatesException extends RuntimeException{
 
-    private HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
     public BookingDatesException(String message) {super(message);}
 }
