@@ -180,26 +180,6 @@ public class SystemServiceImpl implements SystemService {
     }
 
     @Override
-    public UpdateRoomOutput updateRoom(UpdateRoomInput input) {
-
-        log.info("Start updateRoom input:{}", input);
-
-        Room currentRoom = findRoomById(input.getRoomId());
-        if(!currentRoom.getRoomNumber().equals(input.getRoomNo())) {checkForExistingRoomNumber(input.getRoomNo());}
-
-        List<Bed> bedList = findBeds(BedSize.getByCode(input.getBedSize().getCode()), input.getBedCount());
-        Room room = conversionService.convert(input, Room.RoomBuilder.class)
-                .beds(bedList)
-                .build();
-        Room updatedRoom = roomRepository.save(room);
-        UpdateRoomOutput output = conversionService.convert(updatedRoom, UpdateRoomOutput.class);
-
-        log.info("End updateRoom output:{}", output);
-
-        return output;
-    }
-
-    @Override
     public UpdateRoomPartiallyOutput updateRoomPartially(UpdateRoomPartiallyInput input) {
 
         log.info("Start updateRoomPartially input:{}", input);

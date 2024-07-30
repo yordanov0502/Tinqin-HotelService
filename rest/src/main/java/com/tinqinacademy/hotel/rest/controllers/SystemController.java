@@ -12,6 +12,7 @@ import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutp
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOutput;
@@ -36,6 +37,7 @@ public class SystemController {
 
     private final SystemService systemService;
     private final CreateRoomOperation createRoomOperation;
+    private final UpdateRoomOperation updateRoomOperation;
 
     @Operation(summary = "Register visitors.",
             description = "Register visitors as room renters.")
@@ -131,9 +133,14 @@ public class SystemController {
                 .roomId(roomId)
                 .build();
 
-        UpdateRoomOutput output = systemService.updateRoom(input);
+        Either<Error,UpdateRoomOutput> either = updateRoomOperation.process(input);
 
-        return new ResponseEntity<>(output,HttpStatus.OK);
+        if(either.isRight()) {
+            return new ResponseEntity<>(either.get(),HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity<>(either.getLeft().getErrMsg(),either.getLeft().getHttpStatus());
+        }
     }
 
 
