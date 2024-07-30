@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:latest
-    container_name: database1
+    container_name: database-container
     ports:
       - 5775:5432
     environment:

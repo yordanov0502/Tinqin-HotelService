@@ -7,6 +7,7 @@ import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOperat
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.core.exception.exceptions.DuplicateValueException;
 import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
+import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Bed;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;
 import com.tinqinacademy.hotel.persistence.model.enums.BedSize;
@@ -28,16 +29,19 @@ import java.util.stream.IntStream;
 @Service
 public class CreateRoomOperationProcessor implements CreateRoomOperation {
 
+    private final String className = this.getClass().getSimpleName();
     private final RoomRepository roomRepository;
     private final BedRepository bedRepository;
     private final ConversionService conversionService;
     private final ErrorService errorService;
 
+
     @Override
     public Either<Error, CreateRoomOutput> process(CreateRoomInput input) {
 
         Either<Error,CreateRoomOutput> either = Try.of( () -> {
-            log.info("Start ["+this.getClass()+"] process input:{}", input);
+
+            log.info(String.format("Start %s %s input: %s", className,LoggingUtils.getMethodName(),input));
 
             checkForExistingRoomNumber(input.getRoomNo());
 
@@ -49,9 +53,9 @@ public class CreateRoomOperationProcessor implements CreateRoomOperation {
             Room savedRoom = roomRepository.save(room);
             CreateRoomOutput output = conversionService.convert(savedRoom, CreateRoomOutput.class);
 
-            log.info("End ["+this.getClass()+"] process output:{}", output);
-                    return output;
-                })
+            log.info(String.format("End %s %s output: %s", className,LoggingUtils.getMethodName(),output));
+
+            return output;})
                         .toEither()
                 .mapLeft(errorService::handle);
 
@@ -59,18 +63,18 @@ public class CreateRoomOperationProcessor implements CreateRoomOperation {
     }
 
     private void checkForExistingRoomNumber(String roomNumber) {
-        log.info(String.format("Start [%s] %s input: %s", this.getClass().getSimpleName(),"checkForExistingRoomNumber",roomNumber));
+        log.info(String.format("Start %s %s input: %s", className,LoggingUtils.getMethodName(),roomNumber));
 
         if (roomRepository.existsByRoomNumber(roomNumber)) {
-            throw new DuplicateValueException("Room number: " + roomNumber + " already exists in the database.");
+            throw new DuplicateValueException(String.format("Room number: %s already exists in the database.",roomNumber));
         }
 
-        log.info(String.format("End [%s] %s .", this.getClass().getSimpleName(),"checkForExistingRoomNumber"));
+        log.info(String.format("End %s %s.", className,LoggingUtils.getMethodName()));
     }
 
     private List<Bed> findBeds(BedSize bedSize, Integer bedCount) {
 
-        log.info("Start ["+this.getClass()+"] findBeds input:{},{}", bedSize, bedCount);
+        log.info(String.format("Start %s %s input: %s %s", className,LoggingUtils.getMethodName(),bedSize,bedCount));
 
         Bed bed = bedRepository
                 .findByBedSize(bedSize)
@@ -81,7 +85,7 @@ public class CreateRoomOperationProcessor implements CreateRoomOperation {
                 .mapToObj(i -> bed)
                 .toList();
 
-        log.info("End ["+this.getClass()+"] findBeds output:{}", bedList);
+        log.info(String.format("End %s %s output: %s", className,LoggingUtils.getMethodName(),bedList));
 
         return bedList;
     }

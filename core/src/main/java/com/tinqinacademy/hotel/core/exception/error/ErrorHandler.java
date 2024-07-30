@@ -1,10 +1,7 @@
 package com.tinqinacademy.hotel.core.exception.error;
 
 import com.tinqinacademy.hotel.api.error.Error;
-import com.tinqinacademy.hotel.core.exception.exceptions.BookedRoomException;
-import com.tinqinacademy.hotel.core.exception.exceptions.BookingDatesException;
-import com.tinqinacademy.hotel.core.exception.exceptions.DuplicateValueException;
-import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
+import com.tinqinacademy.hotel.core.exception.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +42,12 @@ public class ErrorHandler implements ErrorService{
                         ex -> Error.builder()
                                 .errMsg(ex.getMessage())
                                 .httpStatus(HttpStatus.NOT_IMPLEMENTED)
+                                .build()),
+
+                Case($(instanceOf(NoMethodFoundException.class)),
+                        ex -> Error.builder()
+                                .errMsg(ex.getMessage())
+                                .httpStatus(ex.getHttpStatus())
                                 .build()),
 
                 Case($(),
