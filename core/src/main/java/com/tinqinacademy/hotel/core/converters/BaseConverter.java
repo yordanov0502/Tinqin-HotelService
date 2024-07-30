@@ -12,10 +12,10 @@ public abstract class BaseConverter<S,T,C> implements Converter<S,T> {
 
     @Override
     public T convert(S source){
-        log.info("Start "+type.getSimpleName()+" convert input{}:",source);
-        T result = convertObj(source);
-        log.info("End "+type.getSimpleName()+" convert output{}:",result);
-        return result;
+        log.info(String.format("Start %s convert input: %s", type.getSimpleName(),source));
+        T target = convertObj(source);
+        log.info(String.format("End %s convert output: %s", type.getSimpleName(),target));
+        return target;
     }
 
     protected abstract T convertObj(S source);
