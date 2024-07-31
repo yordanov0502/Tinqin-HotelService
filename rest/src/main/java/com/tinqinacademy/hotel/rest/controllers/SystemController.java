@@ -11,6 +11,7 @@ import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOperation;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOperation;
@@ -41,6 +42,7 @@ public class SystemController extends BaseController{
     private final UpdateRoomOperation updateRoomOperation;
     private final UpdateRoomPartiallyOperation updateRoomPartiallyOperation;
     private final DeleteRoomOperation deleteRoomOperation;
+    private final RegisterVisitorOperation registerVisitorOperation;
 
     @Operation(summary = "Register visitors.",
             description = "Register visitors as room renters.")
@@ -52,9 +54,9 @@ public class SystemController extends BaseController{
     @PostMapping(RestApiRoutes.REGISTER_VISITOR)
     public ResponseEntity<?> registerVisitor(@RequestBody RegisterVisitorInput input) {
 
-        RegisterVisitorOutput output = systemService.registerVisitors(input);
+        Either<Errors,RegisterVisitorOutput> either = registerVisitorOperation.process(input);
 
-        return new ResponseEntity<>(output,HttpStatus.CREATED);
+        return mapToResponseEntity(either, HttpStatus.CREATED);
     }
 
 
