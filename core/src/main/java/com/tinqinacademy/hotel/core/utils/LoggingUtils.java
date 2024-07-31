@@ -1,6 +1,6 @@
 package com.tinqinacademy.hotel.core.utils;
 
-import com.tinqinacademy.hotel.core.exception.exceptions.NoMethodFoundException;
+import com.tinqinacademy.hotel.core.exceptions.custom.NoMethodFoundException;
 
 public class LoggingUtils {
 

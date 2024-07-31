@@ -6,24 +6,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
-import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
-import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
-import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
-import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.VisitorInput;
-import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOutput;
 import com.tinqinacademy.hotel.api.services.SystemService;
-import com.tinqinacademy.hotel.core.exception.exceptions.BookedRoomException;
-import com.tinqinacademy.hotel.core.exception.exceptions.BookingDatesException;
-import com.tinqinacademy.hotel.core.exception.exceptions.DuplicateValueException;
-import com.tinqinacademy.hotel.core.exception.exceptions.NotFoundException;
+import com.tinqinacademy.hotel.core.exceptions.custom.BookedRoomException;
+import com.tinqinacademy.hotel.core.exceptions.custom.BookingDatesException;
+import com.tinqinacademy.hotel.core.exceptions.custom.DuplicateValueException;
+import com.tinqinacademy.hotel.core.exceptions.custom.NotFoundException;
 import com.tinqinacademy.hotel.persistence.model.entity.Bed;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import com.tinqinacademy.hotel.persistence.model.entity.Guest;
@@ -45,7 +39,6 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -223,34 +216,6 @@ public class SystemServiceImpl implements SystemService {
         return output;
     }
 
-    @Override
-    public DeleteRoomOutput deleteRoom(DeleteRoomInput input) {
-
-        log.info("Start deleteRoom input:{}", input);
-
-        Room room = findRoomById(input.getRoomId());
-        checkIfRoomIsBooked(room.getId());
-
-        bookingRepository.setRoomToNullForBookingsByRoomId(room.getId());
-        roomRepository.delete(room);
-
-        DeleteRoomOutput output = DeleteRoomOutput.builder().build();
-
-        log.info("End deleteRoom output:{}", output);
-
-        return output;
-    }
-
-    private boolean isRoomExists (String roomId) {
-
-        log.info("Start isRoomExists input:{}", roomId);
-
-        boolean isRoomExists = roomRepository.existsById(UUID.fromString(roomId));
-
-        log.info("End isRoomExists output:{}", isRoomExists);
-
-        return isRoomExists;
-    }
 
     private void checkForExistingRoomNumber(String roomNumber) {
 
@@ -289,23 +254,7 @@ public class SystemServiceImpl implements SystemService {
         return bed;
     }
 
-    private List<Bed> findBeds(BedSize bedSize, Integer bedCount) {
 
-        log.info("Start findBeds input:{},{}",bedSize, bedCount);
-
-        Bed bed = bedRepository
-                .findByBedSize(bedSize)
-                .orElseThrow(() -> new NotFoundException("Bed doesn't exist (UNKNOWN bedSize)."));
-
-        List<Bed> bedList = IntStream
-                .range(0, bedCount)
-                .mapToObj(i -> bed)
-                .toList();
-
-        log.info("End findBeds output:{}",bedList);
-
-        return bedList;
-    }
 
     private void checkIfRoomIsBooked(UUID roomId) {
 

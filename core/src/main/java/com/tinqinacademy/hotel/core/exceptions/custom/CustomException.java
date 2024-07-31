@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.exception.exceptions;
+package com.tinqinacademy.hotel.core.exceptions.custom;
 
 import org.springframework.http.HttpStatus;
 

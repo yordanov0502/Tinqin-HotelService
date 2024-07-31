@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.exception.error;
+package com.tinqinacademy.hotel.core.exceptions;
 
 import com.tinqinacademy.hotel.api.error.Errors;
 

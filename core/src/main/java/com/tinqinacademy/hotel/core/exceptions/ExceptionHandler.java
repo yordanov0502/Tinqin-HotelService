@@ -1,8 +1,8 @@
-package com.tinqinacademy.hotel.core.exception.error;
+package com.tinqinacademy.hotel.core.exceptions;
 
 import com.tinqinacademy.hotel.api.error.Error;
 import com.tinqinacademy.hotel.api.error.Errors;
-import com.tinqinacademy.hotel.core.exception.exceptions.*;
+import com.tinqinacademy.hotel.core.exceptions.custom.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
