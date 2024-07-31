@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class NoMethodFoundException extends RuntimeException{
+public class NoMethodFoundException extends CustomException{
 
     private final HttpStatus httpStatus = HttpStatus.NOT_FOUND;
 

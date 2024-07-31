@@ -1,7 +1,6 @@
 package com.tinqinacademy.hotel.api.error;
 
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 @Builder(toBuilder = true)
 @Getter
@@ -10,6 +9,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Error {
+    private String field;
     private String errMsg;
-    private HttpStatus httpStatus;
 }

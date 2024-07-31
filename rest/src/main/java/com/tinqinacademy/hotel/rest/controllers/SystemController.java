@@ -1,11 +1,12 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
-import com.tinqinacademy.hotel.api.error.Error;
+import com.tinqinacademy.hotel.api.error.Errors;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
@@ -22,7 +23,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +33,12 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class SystemController {
+public class SystemController extends BaseController{
 
     private final SystemService systemService;
     private final CreateRoomOperation createRoomOperation;
     private final UpdateRoomOperation updateRoomOperation;
+    private final DeleteRoomOperation deleteRoomOperation;
 
     @Operation(summary = "Register visitors.",
             description = "Register visitors as room renters.")
@@ -47,7 +48,7 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "Not found.")
     })
     @PostMapping(RestApiRoutes.REGISTER_VISITOR)
-    public ResponseEntity<?> registerVisitor(@Valid @RequestBody RegisterVisitorInput input) {
+    public ResponseEntity<?> registerVisitor(@RequestBody RegisterVisitorInput input) {
 
         RegisterVisitorOutput output = systemService.registerVisitors(input);
 
@@ -105,16 +106,11 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "Not found."),
     })
     @PostMapping(RestApiRoutes.CREATE_ROOM)
-    public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomInput input) {
+    public ResponseEntity<?> createRoom(@RequestBody CreateRoomInput input) {
 
-        Either<Error,CreateRoomOutput> either = createRoomOperation.process(input);
+        Either<Errors,CreateRoomOutput> either = createRoomOperation.process(input);
 
-        if(either.isRight()) {
-            return new ResponseEntity<>(either.get(),HttpStatus.CREATED);
-        }
-        else{
-            return new ResponseEntity<>(either.getLeft().getErrMsg(),either.getLeft().getHttpStatus());
-        }
+        return mapToResponseEntity(either, HttpStatus.CREATED);
     }
 
 
@@ -127,20 +123,15 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "Not found.")
     })
     @PutMapping(RestApiRoutes.UPDATE_ROOM)
-    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @Valid @RequestBody UpdateRoomInput inputArg) {
+    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @RequestBody UpdateRoomInput inputArg) {
 
         UpdateRoomInput input = inputArg.toBuilder()
                 .roomId(roomId)
                 .build();
 
-        Either<Error,UpdateRoomOutput> either = updateRoomOperation.process(input);
+        Either<Errors,UpdateRoomOutput> either = updateRoomOperation.process(input);
 
-        if(either.isRight()) {
-            return new ResponseEntity<>(either.get(),HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>(either.getLeft().getErrMsg(),either.getLeft().getHttpStatus());
-        }
+        return mapToResponseEntity(either,HttpStatus.OK);
     }
 
 
@@ -153,7 +144,7 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "Not found.")
     })
     @PatchMapping(value = RestApiRoutes.UPDATE_ROOM_PARTIALLY, consumes = "application/json-patch+json")
-    public ResponseEntity<?> updateRoomPartially(@PathVariable String roomId,@Valid @RequestBody UpdateRoomPartiallyInput inputArg) {
+    public ResponseEntity<?> updateRoomPartially(@PathVariable String roomId, @RequestBody UpdateRoomPartiallyInput inputArg) {
 
         UpdateRoomPartiallyInput input = inputArg.toBuilder()
                 .roomId(roomId)
@@ -180,10 +171,9 @@ public class SystemController {
                 .roomId(roomId)
                 .build();
 
-        DeleteRoomOutput output = systemService.deleteRoom(input);
+        Either<Errors,DeleteRoomOutput> either = deleteRoomOperation.process(input);
 
-
-        return new ResponseEntity<>(output,HttpStatus.OK);
+        return mapToResponseEntity(either,HttpStatus.OK);
     }
 
 }

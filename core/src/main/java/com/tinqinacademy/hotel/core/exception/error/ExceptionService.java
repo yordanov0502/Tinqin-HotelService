@@ -1,7 +1,7 @@
 package com.tinqinacademy.hotel.core.exception.error;
 
-import com.tinqinacademy.hotel.api.error.Error;
+import com.tinqinacademy.hotel.api.error.Errors;
 
 public interface ExceptionService {
-    Error handle(Throwable throwable);
+    Errors handle(Throwable throwable);
 }

@@ -28,7 +28,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
-public class HotelController {
+public class HotelController extends BaseController{
 
     private final HotelService hotelService;
 
@@ -92,7 +92,7 @@ public class HotelController {
             @ApiResponse(responseCode = "404", description = "Not found.")
     })
     @PostMapping(RestApiRoutes.BOOK_ROOM)
-    public ResponseEntity<?> bookRoom(@PathVariable String roomId, @Valid @RequestBody BookRoomInput inputArg) {
+    public ResponseEntity<?> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput inputArg) {
 
         BookRoomInput input = inputArg.toBuilder()
                 .roomId(roomId)

@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class DuplicateValueException extends RuntimeException {
+public class DuplicateValueException extends CustomException{
 
     private final HttpStatus httpStatus = HttpStatus.CONFLICT;
 
