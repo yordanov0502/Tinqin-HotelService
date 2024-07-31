@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.system.getvisitors;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.util.Optional;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetVisitorsInput {
+public class GetVisitorsInput implements OperationInput {
     @NotNull
     private LocalDate startDate;
     @NotNull

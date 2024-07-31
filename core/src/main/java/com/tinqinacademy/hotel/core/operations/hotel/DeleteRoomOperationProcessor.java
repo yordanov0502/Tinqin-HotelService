@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations;
+package com.tinqinacademy.hotel.core.operations.hotel;
 
 import com.tinqinacademy.hotel.api.error.Errors;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
@@ -7,6 +7,7 @@ import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput
 import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
 import com.tinqinacademy.hotel.core.exceptions.custom.BookedRoomException;
 import com.tinqinacademy.hotel.core.exceptions.custom.NotFoundException;
+import com.tinqinacademy.hotel.core.operations.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;

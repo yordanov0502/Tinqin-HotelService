@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations;
+package com.tinqinacademy.hotel.core.operations.hotel;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,6 +12,7 @@ import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateR
 import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
 import com.tinqinacademy.hotel.core.exceptions.custom.DuplicateValueException;
 import com.tinqinacademy.hotel.core.exceptions.custom.NotFoundException;
+import com.tinqinacademy.hotel.core.operations.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Bed;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;

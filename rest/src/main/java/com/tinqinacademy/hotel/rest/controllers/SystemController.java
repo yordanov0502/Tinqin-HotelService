@@ -8,6 +8,7 @@ import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorOperation;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
@@ -19,7 +20,6 @@ import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOperation;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOutput;
-import com.tinqinacademy.hotel.api.services.SystemService;
 import com.tinqinacademy.hotel.api.RestApiRoutes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,12 +37,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SystemController extends BaseController{
 
-    private final SystemService systemService;
+    private final RegisterVisitorOperation registerVisitorOperation;
+    private final GetVisitorOperation getVisitorOperation;
     private final CreateRoomOperation createRoomOperation;
     private final UpdateRoomOperation updateRoomOperation;
     private final UpdateRoomPartiallyOperation updateRoomPartiallyOperation;
     private final DeleteRoomOperation deleteRoomOperation;
-    private final RegisterVisitorOperation registerVisitorOperation;
 
     @Operation(summary = "Register visitors.",
             description = "Register visitors as room renters.")
@@ -95,9 +95,9 @@ public class SystemController extends BaseController{
                 .roomNumber(roomNumber)
                 .build();
 
-        GetVisitorsOutput output = systemService.getVisitors(input);
+        Either<Errors,GetVisitorsOutput> either = getVisitorOperation.process(input);
 
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        return mapToResponseEntity(either, HttpStatus.OK);
     }
 
 

@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations;
+package com.tinqinacademy.hotel.core.operations.hotel;
 
 import com.tinqinacademy.hotel.api.error.Errors;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
@@ -8,6 +8,7 @@ import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.Vis
 import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
 import com.tinqinacademy.hotel.core.exceptions.custom.DuplicateValueException;
 import com.tinqinacademy.hotel.core.exceptions.custom.NotFoundException;
+import com.tinqinacademy.hotel.core.operations.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import com.tinqinacademy.hotel.persistence.model.entity.Guest;
