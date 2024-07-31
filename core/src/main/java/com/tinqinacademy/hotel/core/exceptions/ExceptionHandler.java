@@ -5,7 +5,7 @@ import com.tinqinacademy.hotel.api.error.Errors;
 import com.tinqinacademy.hotel.core.exceptions.custom.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static io.vavr.API.*;
 import static io.vavr.Predicates.instanceOf;
 
-@Service
+@Component
 public class ExceptionHandler implements ExceptionService {
     @Override
     public Errors handle(Throwable throwable) {

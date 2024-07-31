@@ -16,6 +16,7 @@ import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOperation;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOutput;
 import com.tinqinacademy.hotel.api.services.SystemService;
 import com.tinqinacademy.hotel.api.RestApiRoutes;
@@ -38,6 +39,7 @@ public class SystemController extends BaseController{
     private final SystemService systemService;
     private final CreateRoomOperation createRoomOperation;
     private final UpdateRoomOperation updateRoomOperation;
+    private final UpdateRoomPartiallyOperation updateRoomPartiallyOperation;
     private final DeleteRoomOperation deleteRoomOperation;
 
     @Operation(summary = "Register visitors.",
@@ -150,9 +152,9 @@ public class SystemController extends BaseController{
                 .roomId(roomId)
                 .build();
 
-        UpdateRoomPartiallyOutput output = systemService.updateRoomPartially(input);
+        Either<Errors, UpdateRoomPartiallyOutput> either = updateRoomPartiallyOperation.process(input);
 
-        return new ResponseEntity<>(output,HttpStatus.OK);
+        return mapToResponseEntity(either,HttpStatus.OK);
     }
 
 

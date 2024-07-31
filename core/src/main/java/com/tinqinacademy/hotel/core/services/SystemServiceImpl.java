@@ -1,32 +1,19 @@
 package com.tinqinacademy.hotel.core.services;
 
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatchException;
-import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.VisitorInput;
-import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
-import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOutput;
 import com.tinqinacademy.hotel.api.services.SystemService;
-import com.tinqinacademy.hotel.core.exceptions.custom.BookedRoomException;
 import com.tinqinacademy.hotel.core.exceptions.custom.BookingDatesException;
 import com.tinqinacademy.hotel.core.exceptions.custom.DuplicateValueException;
 import com.tinqinacademy.hotel.core.exceptions.custom.NotFoundException;
-import com.tinqinacademy.hotel.persistence.model.entity.Bed;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import com.tinqinacademy.hotel.persistence.model.entity.Guest;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;
-import com.tinqinacademy.hotel.persistence.model.enums.BedSize;
-import com.tinqinacademy.hotel.persistence.repository.BedRepository;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repository.GuestRepository;
-import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +22,6 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -45,12 +31,9 @@ import java.util.stream.Collectors;
 @Service
 public class SystemServiceImpl implements SystemService {
 
-    private final BedRepository bedRepository;
-    private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
     private final GuestRepository guestRepository;
     private final ConversionService conversionService;
-    private final ObjectMapper objectMapper;
     private final EntityManager entityManager;
 
     @Transactional
@@ -170,106 +153,6 @@ public class SystemServiceImpl implements SystemService {
         log.info("End getVisitors output:{}", output);
 
         return output;
-    }
-
-    @Override
-    public UpdateRoomPartiallyOutput updateRoomPartially(UpdateRoomPartiallyInput input) {
-
-        log.info("Start updateRoomPartially input:{}", input);
-
-        Room currentRoom = findRoomById(input.getRoomId());
-        if(!currentRoom.getRoomNumber().equals(input.getRoomNo())) {checkForExistingRoomNumber(input.getRoomNo());}
-
-        int numberOfBedsToAdd = input.getBedCount() != null ? input.getBedCount() : currentRoom.getBeds().size();
-
-        Bed bedToAdd = currentRoom.getBeds().getFirst();
-        if(input.getBedSize() != null){
-            bedToAdd = findBedByBedSize(BedSize.getByCode(input.getBedSize().toString()));
-        }
-
-        Room newRoom = conversionService.convert(input, Room.class);
-        if(input.getBedCount() != null || input.getBedSize() != null){
-            List<Bed> newBeds = new ArrayList<>();
-            for(int i = 0;i < numberOfBedsToAdd; i++){
-                newBeds.add(bedToAdd);
-            }
-            newRoom.setBeds(newBeds);
-        }
-
-        JsonNode currentRoomNode = objectMapper.valueToTree(currentRoom);
-        JsonNode newRoomNode = objectMapper.valueToTree(newRoom);
-
-        try{
-            JsonMergePatch patch = JsonMergePatch.fromJson(newRoomNode);
-            newRoom = objectMapper.treeToValue(patch.apply(currentRoomNode), Room.class);
-        }
-        catch (JsonPatchException | JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-        Room updatedRoom = roomRepository.save(newRoom);
-
-        UpdateRoomPartiallyOutput output = conversionService.convert(updatedRoom, UpdateRoomPartiallyOutput.class);
-
-        log.info("End updateRoomPartially output:{}", output);
-
-        return output;
-    }
-
-
-    private void checkForExistingRoomNumber(String roomNumber) {
-
-        log.info("Start checkForExistingRoomNumber input:{}", roomNumber);
-
-        if(roomRepository.existsByRoomNumber(roomNumber)) {
-            throw new DuplicateValueException("Room number: "+roomNumber+" already exists in the database.");
-        }
-
-        log.info("End checkForExistingRoomNumber.");
-    }
-
-    private Room findRoomById(String roomId) {
-
-        log.info("Start findRoomById input:{}", roomId);
-
-        Room room = roomRepository
-                .findById(UUID.fromString(roomId))
-                .orElseThrow(() -> new NotFoundException("Room with id[" + roomId + "] doesn't exist."));
-
-        log.info("End findRoomById output:{}", room);
-
-        return room;
-    }
-
-    private Bed findBedByBedSize(BedSize bedSize) {
-
-        log.info("Start findBedByBedSize input:{}",bedSize);
-
-        Bed bed = bedRepository
-                .findByBedSize(bedSize)
-                .orElseThrow(() -> new NotFoundException("Bed doesn't exist (UNKNOWN bedSize)."));
-
-        log.info("End findBedByBedSize output:{}",bed);
-
-        return bed;
-    }
-
-
-
-    private void checkIfRoomIsBooked(UUID roomId) {
-
-        log.info("Start checkIfRoomIsBooked input:{}",roomId);
-
-        boolean isRoomBooked = bookingRepository
-                .findAllByRoomId(roomId)
-                .stream()
-                .anyMatch(booking -> !LocalDate.now().isAfter(booking.getEndDate()));
-
-        if(isRoomBooked){
-            throw new BookedRoomException("Room with id[" + roomId.toString() + "] cannot be deleted, because it is booked.");
-        }
-
-        log.info("End checkIfRoomIsBooked.");
     }
 
 }
