@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
+import com.tinqinacademy.hotel.api.error.Errors;
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
 
@@ -9,6 +10,7 @@ import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableRoomsIdsOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAvailableRoomsInput;
+import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAvailableRoomsOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoInput;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
@@ -18,6 +20,7 @@ import com.tinqinacademy.hotel.api.RestApiRoutes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.vavr.control.Either;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +34,7 @@ import java.time.LocalDate;
 public class HotelController extends BaseController{
 
     private final HotelService hotelService;
-
+    private final GetIdsOfAvailableRoomsOperation getAvailableRoomsOperation;
 
 
     @Operation(summary = "Get ids of available rooms.",
@@ -57,9 +60,9 @@ public class HotelController extends BaseController{
                 .bathroomType(bathroomType != null ? BathroomType.getByCode(bathroomType) : null)
                 .build();
 
-        AvailableRoomsIdsOutput output = hotelService.getIdsOfAvailableRooms(input);
+        Either<Errors,AvailableRoomsIdsOutput> availableRoomsOutput = getAvailableRoomsOperation.process(input);
 
-        return new ResponseEntity<>(output,HttpStatus.OK);
+        return mapToResponseEntity(availableRoomsOutput,HttpStatus.OK);
     }
 
 

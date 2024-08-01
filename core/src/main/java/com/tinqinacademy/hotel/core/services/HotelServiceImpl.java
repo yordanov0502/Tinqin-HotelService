@@ -43,26 +43,6 @@ public class HotelServiceImpl implements HotelService {
     private final ConversionService conversionService;
 
     @Override
-    public AvailableRoomsIdsOutput getIdsOfAvailableRooms(GetIdsOfAvailableRoomsInput input) {
-
-        log.info("Start getIdsOfAvailableRoomsInput input:{}",input);
-
-        List<UUID> availableRoomIds = bookingRepository
-                .findAvailableRooms(
-                        input.getStartDate(),
-                        input.getEndDate(),
-                        input.getBedCount(),
-                        input.getBedSize() != null ? BedSize.getByCode(input.getBedSize().toString()) : null,
-                        input.getBathroomType() != null ? BathroomType.getByCode(input.getBathroomType().toString()) : null);
-
-        AvailableRoomsIdsOutput output = conversionService.convert(availableRoomIds, AvailableRoomsIdsOutput.class);
-
-        log.info("End getIdsOfAvailableRooms output:{}",output);
-
-        return output;
-    }
-
-    @Override
     public RoomInfoOutput getRoomInfo(RoomInfoInput input) {
 
         log.info("Start getRoomInfo input:{}",input);
