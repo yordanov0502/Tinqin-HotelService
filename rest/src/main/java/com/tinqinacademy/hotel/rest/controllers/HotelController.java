@@ -7,6 +7,7 @@ import com.tinqinacademy.hotel.api.model.enums.BedSize;
 
 
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableRoomsIdsOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAvailableRoomsInput;
@@ -37,6 +38,7 @@ public class HotelController extends BaseController{
     private final HotelService hotelService;
     private final GetIdsOfAvailableRoomsOperation getAvailableRoomsOperation;
     private final GetRoomOperation getRoomOperation;
+    private final BookRoomOperation bookRoomOperation;
 
     @Operation(summary = "Get ids of available rooms.",
             description = "Checks whether a room is available for a certain period. Bed requirements should come as query parameters in URL.")
@@ -102,9 +104,9 @@ public class HotelController extends BaseController{
                 .roomId(roomId)
                 .build();
 
-        BookRoomOutput output = hotelService.bookRoom(input);
+        Either<Errors,BookRoomOutput> either = bookRoomOperation.process(input);
 
-        return new ResponseEntity<>(output,HttpStatus.CREATED);
+        return mapToResponseEntity(either,HttpStatus.CREATED);
         }
 
 

@@ -8,7 +8,6 @@ import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
 
 public interface HotelService {
 
-    BookRoomOutput bookRoom(BookRoomInput input);
     UnbookRoomOutput unbookRoom(UnbookRoomInput input);
 
 

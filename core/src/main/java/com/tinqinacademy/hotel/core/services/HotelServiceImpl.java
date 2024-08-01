@@ -35,37 +35,6 @@ public class HotelServiceImpl implements HotelService {
     private final ConversionService conversionService;
 
 
-
-    @Override
-    public BookRoomOutput bookRoom(BookRoomInput input){
-
-        log.info("Start bookRoom input:{}",input);
-
-        validateDates(input.getStartDate(),input.getEndDate());
-
-        Room room = findRoomById(input.getRoomId());
-
-        User user = findUserByFirstAndLastNameAndPhone(input.getFirstName(),input.getLastName(),input.getPhoneNumber());
-
-        checkRoomAvailability(room.getId(),input.getStartDate(),input.getEndDate());
-
-        long days = input.getEndDate().toEpochDay() - input.getStartDate().toEpochDay();
-        BigDecimal priceOfBooking = room.getPrice().multiply(BigDecimal.valueOf(days));
-
-        Booking newBooking = conversionService.convert(input,Booking.BookingBuilder.class)
-                .totalPrice(priceOfBooking)
-                .room(room)
-                .user(user)
-                .build();
-        bookingRepository.save(newBooking);
-
-        BookRoomOutput output = BookRoomOutput.builder().build();
-
-        log.info("End bookRoom output:{}",output);
-
-        return output;
-    }
-
     @Override
     public UnbookRoomOutput unbookRoom(UnbookRoomInput input) {
 
@@ -82,62 +51,9 @@ public class HotelServiceImpl implements HotelService {
         return output;
     }
 
-    private Room findRoomById(String roomId) {
 
-        log.info("Start findRoomById input:{}", roomId);
 
-        Room room = roomRepository
-                .findById(UUID.fromString(roomId))
-                .orElseThrow(() -> new NotFoundException("Room with id[" + roomId + "] doesn't exist."));
 
-        log.info("End findRoomById output:{}", room.toString());
-
-        return room;
-    }
-
-    private void validateDates(LocalDate startDate, LocalDate endDate) {
-
-        log.info("Start validateDates input:{},{}", startDate, endDate);
-
-        if(startDate.isEqual(endDate)) {
-            throw new BookingDatesException("Start date and end date of booking cannot be equal.");
-        }
-        if(startDate.isAfter(endDate)) {
-            throw new BookingDatesException("Start date cannot be after the end date.");
-        }
-
-        log.info("End validateDates.");
-    }
-
-    private void checkRoomAvailability(UUID roomId, LocalDate startDate, LocalDate endDate) {
-
-        log.info("Start checkRoomAvailability input:{},{},{}", roomId, startDate, endDate);
-
-        if(bookingRepository.isRoomBooked(roomId,startDate,endDate)){
-            throw new BookedRoomException("Room with id["+roomId+"] is not available for ["+startDate+"/"+endDate+"].");
-        }
-
-        log.info("End checkRoomAvailability.");
-    }
-
-    private User findUserByFirstAndLastNameAndPhone(String firstName, String lastName, String phoneNumber) {
-
-        log.info("Start findUserByFirstAndLastNameAndPhone input:{},{},{}", firstName, lastName, phoneNumber);
-
-        User user = userRepository
-                .findByFirstNameAndLastNameAndPhoneNumber(
-                        firstName,
-                        lastName,
-                        phoneNumber)
-                .orElseThrow(() -> new NotFoundException("User with name: " +
-                        firstName +" "+
-                        lastName + " and phone number: "+
-                        phoneNumber + " doesn't exist."));
-
-        log.info("End findUserByFirstAndLastNameAndPhone output:{}", user.toString());
-
-        return user;
-    }
 
     private Booking findBookingById(String bookingId) {
 
