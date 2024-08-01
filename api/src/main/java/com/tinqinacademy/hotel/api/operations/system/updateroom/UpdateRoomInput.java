@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
+import com.tinqinacademy.hotel.api.validation.bathroomtype.BathroomTypeCode;
+import com.tinqinacademy.hotel.api.validation.bedsize.BedSizeCode;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -25,8 +27,10 @@ public class UpdateRoomInput implements OperationInput {
     @NotNull
     private Integer bedCount;
     @NotNull
+    @BedSizeCode
     private BedSize bedSize;
     @NotNull
+    @BathroomTypeCode
     private BathroomType bathroomType;
     @Positive
     @NotNull

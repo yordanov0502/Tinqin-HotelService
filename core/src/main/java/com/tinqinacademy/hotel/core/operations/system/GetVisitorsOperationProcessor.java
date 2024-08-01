@@ -90,14 +90,14 @@ public class GetVisitorsOperationProcessor extends BaseOperationProcessor implem
 
         addPredicateIfPresent(predicates, Optional.of(input.getStartDate()), startDate -> cb.greaterThanOrEqualTo(booking.get("startDate"), startDate));
         addPredicateIfPresent(predicates, Optional.of(input.getEndDate()), endDate -> cb.lessThanOrEqualTo(booking.get("endDate"), endDate));
-        addPredicateIfPresent(predicates, input.getFirstName(), firstName -> cb.equal(guest.get("firstName"), firstName));
-        addPredicateIfPresent(predicates, input.getLastName(), lastName -> cb.equal(guest.get("lastName"), lastName));
-        addPredicateIfPresent(predicates, input.getPhoneNumber(), phoneNumber -> cb.equal(guest.get("phoneNumber"), phoneNumber));
-        addPredicateIfPresent(predicates, input.getIdCardNumber(), idCardNumber -> cb.equal(guest.get("idCardNumber"), idCardNumber));
-        addPredicateIfPresent(predicates, input.getIdCardValidity(), idCardValidity -> cb.equal(guest.get("idCardValidity"), idCardValidity));
-        addPredicateIfPresent(predicates, input.getIdCardIssueAuthority(), idCardAuthority -> cb.equal(guest.get("idCardIssueAuthority"), idCardAuthority));
-        addPredicateIfPresent(predicates, input.getIdCardIssueDate(), idCardIssueDate -> cb.equal(guest.get("idCardIssueDate"), idCardIssueDate));
-        addPredicateIfPresent(predicates, input.getRoomNumber(), roomNumber -> cb.equal(room.get("roomNumber"), roomNumber));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getFirstName()), firstName -> cb.equal(guest.get("firstName"), firstName));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getLastName()), lastName -> cb.equal(guest.get("lastName"), lastName));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getPhoneNumber()), phoneNumber -> cb.equal(guest.get("phoneNumber"), phoneNumber));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardNumber()), idCardNumber -> cb.equal(guest.get("idCardNumber"), idCardNumber));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardValidity()), idCardValidity -> cb.equal(guest.get("idCardValidity"), idCardValidity));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardIssueAuthority()), idCardAuthority -> cb.equal(guest.get("idCardIssueAuthority"), idCardAuthority));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardIssueDate()), idCardIssueDate -> cb.equal(guest.get("idCardIssueDate"), idCardIssueDate));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getRoomNumber()), roomNumber -> cb.equal(room.get("roomNumber"), roomNumber));
 
         log.info(String.format("End %s %s output: %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),predicates));
 
@@ -120,13 +120,13 @@ public class GetVisitorsOperationProcessor extends BaseOperationProcessor implem
         log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),input));
 
         boolean isCriteriaMatched =
-                (input.getFirstName().isEmpty() || input.getFirstName().get().equals(guest.getFirstName())) &&
-                (input.getLastName().isEmpty() || input.getLastName().get().equals(guest.getLastName())) &&
-                (input.getPhoneNumber().isEmpty() || input.getPhoneNumber().get().equals(guest.getPhoneNumber())) &&
-                (input.getIdCardNumber().isEmpty() || input.getIdCardNumber().get().equals(guest.getIdCardNumber())) &&
-                (input.getIdCardValidity().isEmpty() || input.getIdCardValidity().get().equals(guest.getIdCardValidity())) &&
-                (input.getIdCardIssueAuthority().isEmpty() || input.getIdCardIssueAuthority().get().equals(guest.getIdCardIssueAuthority())) &&
-                (input.getIdCardIssueDate().isEmpty() || input.getIdCardIssueDate().get().equals(guest.getIdCardIssueDate()));
+                (input.getFirstName() == null || input.getFirstName().equals(guest.getFirstName())) &&
+                (input.getLastName() == null || input.getLastName().equals(guest.getLastName())) &&
+                (input.getPhoneNumber() == null || input.getPhoneNumber().equals(guest.getPhoneNumber())) &&
+                (input.getIdCardNumber() == null || input.getIdCardNumber().equals(guest.getIdCardNumber())) &&
+                (input.getIdCardValidity() == null || input.getIdCardValidity().equals(guest.getIdCardValidity())) &&
+                (input.getIdCardIssueAuthority() == null || input.getIdCardIssueAuthority().equals(guest.getIdCardIssueAuthority())) &&
+                (input.getIdCardIssueDate() == null || input.getIdCardIssueDate().equals(guest.getIdCardIssueDate()));
 
         log.info(String.format("End %s %s output: %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),isCriteriaMatched));
         return isCriteriaMatched;

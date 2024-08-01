@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @Getter
-public class ViolationsException extends CustomException{
+public class ViolationsException extends RuntimeException{
 
     private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     private final List<Error> errorList;
