@@ -42,8 +42,7 @@ public class GetVisitorsOperationProcessor extends BaseOperationProcessor implem
     @Override
     public Either<Errors, GetVisitorsOutput> process(GetVisitorsInput input) {
 
-        Either<Errors,GetVisitorsOutput> either = Try.of(()->{
-
+        return Try.of(() -> {
             log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
             validate(input);
@@ -67,8 +66,6 @@ public class GetVisitorsOperationProcessor extends BaseOperationProcessor implem
             return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-        return either;
     }
 
     private void validateBookingDates(LocalDate startDate, LocalDate endDate) {

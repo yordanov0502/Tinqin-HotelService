@@ -48,8 +48,7 @@ public class UpdateRoomPartiallyOperationProcessor extends BaseOperationProcesso
     @Override
     public Either<Errors, UpdateRoomPartiallyOutput> process(UpdateRoomPartiallyInput input) {
 
-        Either<Errors,UpdateRoomPartiallyOutput> either = Try.of( ()-> {
-
+        return Try.of(() -> {
             log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
             validate(input);
@@ -93,8 +92,6 @@ public class UpdateRoomPartiallyOperationProcessor extends BaseOperationProcesso
             return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-        return either;
     }
 
     private Room findRoomById(String roomId) {

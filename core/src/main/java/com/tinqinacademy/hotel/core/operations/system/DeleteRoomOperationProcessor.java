@@ -38,8 +38,7 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor impleme
     @Override
     public Either<Errors, DeleteRoomOutput> process(DeleteRoomInput input) {
 
-        Either<Errors,DeleteRoomOutput> either = Try.of( () -> {
-
+        return Try.of(() -> {
             log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
             validate(input);
@@ -55,8 +54,6 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor impleme
         })
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-        return either;
     }
 
     private Room findRoomById(String roomId) {

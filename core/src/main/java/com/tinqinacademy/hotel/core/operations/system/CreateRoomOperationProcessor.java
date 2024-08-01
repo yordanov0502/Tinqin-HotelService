@@ -42,8 +42,7 @@ public class CreateRoomOperationProcessor extends BaseOperationProcessor impleme
     @Override
     public Either<Errors, CreateRoomOutput> process(CreateRoomInput input) {
 
-        Either<Errors,CreateRoomOutput> either = Try.of( () -> {
-
+        return Try.of(() -> {
             log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),input));
 
             validate(input);
@@ -63,8 +62,6 @@ public class CreateRoomOperationProcessor extends BaseOperationProcessor impleme
             return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-        return either;
     }
 
     private void checkForExistingRoomNumber(String roomNumber) {

@@ -36,8 +36,7 @@ public class GetIdsOfAvailableRoomsOperationProcessor extends BaseOperationProce
     @Override
     public Either<Errors, AvailableRoomsIdsOutput> process(GetIdsOfAvailableRoomsInput input) {
 
-        Either<Errors,AvailableRoomsIdsOutput> either = Try.of(() -> {
-
+        return Try.of(() -> {
             log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
             validate(input);
@@ -58,8 +57,6 @@ public class GetIdsOfAvailableRoomsOperationProcessor extends BaseOperationProce
             return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-        return either;
     }
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {
