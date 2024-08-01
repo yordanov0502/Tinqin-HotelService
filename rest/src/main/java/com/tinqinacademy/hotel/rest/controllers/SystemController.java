@@ -72,14 +72,14 @@ public class SystemController extends BaseController{
     public ResponseEntity<?> getVisitors(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam(required = false) Optional<String> firstName,
-            @RequestParam(required = false) Optional<String> lastName,
-            @RequestParam(required = false) Optional<String> phoneNumber,
-            @RequestParam(required = false) Optional<String> idCardNumber,
-            @RequestParam(required = false) Optional<LocalDate> idCardValidity,
-            @RequestParam(required = false) Optional<String> idCardIssueAuthority,
-            @RequestParam(required = false) Optional<LocalDate> idCardIssueDate,
-            @RequestParam(required = false) Optional<String> roomNumber
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String idCardNumber,
+            @RequestParam(required = false) LocalDate idCardValidity,
+            @RequestParam(required = false) String idCardIssueAuthority,
+            @RequestParam(required = false) LocalDate idCardIssueDate,
+            @RequestParam(required = false) String roomNumber
     ) {
 
         GetVisitorsInput input = GetVisitorsInput.builder()

@@ -18,13 +18,13 @@ public class GetVisitorsInput implements OperationInput {
     private LocalDate startDate;
     @NotNull
     private LocalDate endDate;
-    private Optional<String> firstName;
-    private Optional<String> lastName;
-    private Optional<String> phoneNumber;
-    private Optional<String> idCardNumber;
-    private Optional<LocalDate> idCardValidity;
-    private Optional<String> idCardIssueAuthority;
-    private Optional<LocalDate> idCardIssueDate;
-    private Optional<String> roomNumber;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+    private String idCardNumber;
+    private LocalDate idCardValidity;
+    private String idCardIssueAuthority;
+    private LocalDate idCardIssueDate;
+    private String roomNumber;
 
 }
