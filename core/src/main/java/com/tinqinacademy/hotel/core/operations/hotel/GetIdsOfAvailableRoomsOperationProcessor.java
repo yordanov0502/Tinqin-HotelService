@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.system;
+package com.tinqinacademy.hotel.core.operations.hotel;
 
 import com.tinqinacademy.hotel.api.error.Errors;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableRoomsIdsOutput;

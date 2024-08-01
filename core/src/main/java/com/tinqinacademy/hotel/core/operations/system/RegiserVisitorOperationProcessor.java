@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.operations.hotel;
+package com.tinqinacademy.hotel.core.operations.system;
 
 import com.tinqinacademy.hotel.api.error.Errors;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;

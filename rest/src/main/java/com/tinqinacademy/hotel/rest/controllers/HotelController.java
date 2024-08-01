@@ -15,15 +15,14 @@ import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAv
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoInput;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
-import com.tinqinacademy.hotel.api.services.HotelService;
 import com.tinqinacademy.hotel.api.RestApiRoutes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +34,10 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class HotelController extends BaseController{
 
-    private final HotelService hotelService;
     private final GetIdsOfAvailableRoomsOperation getAvailableRoomsOperation;
     private final GetRoomOperation getRoomOperation;
     private final BookRoomOperation bookRoomOperation;
+    private final UnbookOperation unbookOperation;
 
     @Operation(summary = "Get ids of available rooms.",
             description = "Checks whether a room is available for a certain period. Bed requirements should come as query parameters in URL.")
@@ -125,9 +124,9 @@ public class HotelController extends BaseController{
                 .bookingId(bookingId)
                 .build();
 
-        UnbookRoomOutput output = hotelService.unbookRoom(input);
+        Either<Errors,UnbookRoomOutput> either = unbookOperation.process(input);
 
-        return new ResponseEntity<>(output,HttpStatus.OK);
+        return mapToResponseEntity(either,HttpStatus.OK);
     }
 
 

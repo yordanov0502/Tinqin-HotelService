@@ -52,13 +52,13 @@ public class ExceptionHandler implements ExceptionService {
                 Case($(instanceOf(UnsupportedOperationException.class)),
                         ex -> Errors.builder()
                                 .errorList(List.of(Error.builder().errMsg(ex.getMessage()).build()))
-                                .httpStatus(HttpStatus.NOT_IMPLEMENTED)
+                                .httpStatus(HttpStatus.BAD_REQUEST) //! NOT_IMPLEMENTED
                                 .build()),
 
                 Case($(),
                         ex -> Errors.builder()
                                 .errorList(List.of(Error.builder().errMsg(ex.getMessage()).build()))
-                                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .httpStatus(HttpStatus.BAD_REQUEST) //! INTERNAL_SERVER_ERROR
                                 .build())
         );
 
