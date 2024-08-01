@@ -1,15 +1,18 @@
 package com.tinqinacademy.hotel.core.operations;
 
 import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.error.Error;
 import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
+import com.tinqinacademy.hotel.core.exceptions.custom.ViolationsException;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -19,10 +22,18 @@ public abstract class BaseOperationProcessor{
     protected final ExceptionService exceptionService;
     private final Validator validator;
 
-    protected <T extends OperationInput> void validate(T input){
-        Set<ConstraintViolation<T>> violationSet = validator.validate(input);
+    protected <I extends OperationInput> void validate(I input){
+        Set<ConstraintViolation<I>> violationSet = validator.validate(input);
+
         if(!violationSet.isEmpty()){
-            throw new ConstraintViolationException(violationSet);
+        List<Error> errorList = violationSet
+                .stream()
+                .map(violation -> Error.builder()
+                        .field(violation.getPropertyPath().toString())
+                        .errMsg(violation.getMessage())
+                        .build())
+                .collect(Collectors.toList());
+        throw new ViolationsException("Violation exception occurred.",errorList);
         }
     }
 }
