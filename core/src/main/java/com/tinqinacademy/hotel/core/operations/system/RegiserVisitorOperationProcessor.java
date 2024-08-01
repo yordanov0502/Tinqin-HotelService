@@ -45,7 +45,7 @@ public class RegiserVisitorOperationProcessor extends BaseOperationProcessor imp
     @Override
     public Either<Errors, RegisterVisitorOutput> process(RegisterVisitorInput input) {
 
-        Either<Errors,RegisterVisitorOutput> either = Try.of(()->{
+        return Try.of(() -> {
             log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
             validate(input);
@@ -83,8 +83,6 @@ public class RegiserVisitorOperationProcessor extends BaseOperationProcessor imp
             return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-        return either;
     }
 
     private void checkForExistingPhoneNumber(String phoneNumber) {

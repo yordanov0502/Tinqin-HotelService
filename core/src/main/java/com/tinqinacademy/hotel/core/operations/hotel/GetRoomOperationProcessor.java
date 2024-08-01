@@ -38,8 +38,7 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
     @Override
     public Either<Errors, RoomInfoOutput> process(RoomInfoInput input) {
 
-        Either<Errors,RoomInfoOutput> either = Try.of(() -> {
-
+        return Try.of(() -> {
             log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
             validate(input);
@@ -61,8 +60,6 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor implements
             return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-       return either;
     }
 
     private Room findRoomById(String roomId) {

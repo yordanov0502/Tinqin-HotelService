@@ -33,8 +33,7 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
     @Override
     public Either<Errors, UnbookRoomOutput> process(UnbookRoomInput input) {
 
-        Either<Errors,UnbookRoomOutput> either = Try.of(() -> {
-
+        return Try.of(() -> {
         log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
         Booking booking = findBookingById(input.getBookingId());
@@ -48,8 +47,6 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
         return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
-
-        return either;
     }
 
     private Booking findBookingById(String bookingId) {
