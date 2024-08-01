@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.hotel.getroom;
 
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.content.BookedInterval;
@@ -15,7 +16,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoomInfoOutput {
+public class RoomInfoOutput implements OperationOutput {
 
     private String roomId;
     private BigDecimal price;

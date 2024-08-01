@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.hotel.bookroom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookRoomInput {
+public class BookRoomInput implements OperationInput {
 
     @JsonIgnore
     private String roomId;

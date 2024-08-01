@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.core.exception;
+package com.tinqinacademy.hotel.api.error;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ErrorInfo {
+public class Error {
     private String field;
-    private String exceptionMessage;
+    private String errMsg;
 }

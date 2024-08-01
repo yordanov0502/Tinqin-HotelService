@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms;
 
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetIdsOfAvailableRoomsInput {
+public class GetIdsOfAvailableRoomsInput implements OperationInput {
 
     @NotNull
     private LocalDate startDate;

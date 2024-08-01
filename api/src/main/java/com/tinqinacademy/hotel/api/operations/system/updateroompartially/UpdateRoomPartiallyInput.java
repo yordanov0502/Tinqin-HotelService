@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.system.updateroompartially;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
 import jakarta.validation.constraints.*;
@@ -14,7 +15,7 @@ import java.math.BigDecimal;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateRoomPartiallyInput {
+public class UpdateRoomPartiallyInput implements OperationInput {
 
     @JsonIgnore
     private String roomId;
