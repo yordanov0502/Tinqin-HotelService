@@ -11,6 +11,7 @@ import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableRoomsIdsOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAvailableRoomsInput;
 import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAvailableRoomsOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoInput;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
@@ -35,7 +36,7 @@ public class HotelController extends BaseController{
 
     private final HotelService hotelService;
     private final GetIdsOfAvailableRoomsOperation getAvailableRoomsOperation;
-
+    private final GetRoomOperation getRoomOperation;
 
     @Operation(summary = "Get ids of available rooms.",
             description = "Checks whether a room is available for a certain period. Bed requirements should come as query parameters in URL.")
@@ -60,9 +61,9 @@ public class HotelController extends BaseController{
                 .bathroomType(bathroomType != null ? BathroomType.getByCode(bathroomType) : null)
                 .build();
 
-        Either<Errors,AvailableRoomsIdsOutput> availableRoomsOutput = getAvailableRoomsOperation.process(input);
+        Either<Errors,AvailableRoomsIdsOutput> either = getAvailableRoomsOperation.process(input);
 
-        return mapToResponseEntity(availableRoomsOutput,HttpStatus.OK);
+        return mapToResponseEntity(either,HttpStatus.OK);
     }
 
 
@@ -81,9 +82,9 @@ public class HotelController extends BaseController{
                 .roomId(roomId)
                 .build();
 
-        RoomInfoOutput output = hotelService.getRoomInfo(input);
+        Either<Errors,RoomInfoOutput> either = getRoomOperation.process(input);
 
-        return new ResponseEntity<>(output,HttpStatus.OK);
+        return mapToResponseEntity(either,HttpStatus.OK);
     }
 
 

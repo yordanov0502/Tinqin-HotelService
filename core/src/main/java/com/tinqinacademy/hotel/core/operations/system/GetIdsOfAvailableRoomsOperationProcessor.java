@@ -59,7 +59,6 @@ public class GetIdsOfAvailableRoomsOperationProcessor extends BaseOperationProce
                 .toEither()
                 .mapLeft(exceptionService::handle);
 
-
         return either;
     }
 

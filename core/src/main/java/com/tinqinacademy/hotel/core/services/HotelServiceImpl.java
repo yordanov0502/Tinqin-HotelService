@@ -3,11 +3,6 @@ package com.tinqinacademy.hotel.core.services;
 
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOutput;
-import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableRoomsIdsOutput;
-import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.GetIdsOfAvailableRoomsInput;
-import com.tinqinacademy.hotel.api.operations.hotel.getroom.content.BookedInterval;
-import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoInput;
-import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
 import com.tinqinacademy.hotel.api.services.HotelService;
@@ -17,8 +12,6 @@ import com.tinqinacademy.hotel.core.exceptions.custom.NotFoundException;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;
 import com.tinqinacademy.hotel.persistence.model.entity.User;
-import com.tinqinacademy.hotel.persistence.model.enums.BathroomType;
-import com.tinqinacademy.hotel.persistence.model.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import com.tinqinacademy.hotel.persistence.repository.UserRepository;
@@ -29,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -42,27 +34,6 @@ public class HotelServiceImpl implements HotelService {
     private final BookingRepository bookingRepository;
     private final ConversionService conversionService;
 
-    @Override
-    public RoomInfoOutput getRoomInfo(RoomInfoInput input) {
-
-        log.info("Start getRoomInfo input:{}",input);
-
-        Room room = findRoomById(input.getRoomId());
-
-        List<BookedInterval> roomBookedIntervals = bookingRepository
-                .findAllBookedIntervalsByRoomId(room.getId())
-                .stream()
-                .map(b -> new BookedInterval(b.getStartDate(),b.getEndDate()))
-                .toList();
-
-        RoomInfoOutput output = conversionService.convert(room,RoomInfoOutput.RoomInfoOutputBuilder.class)
-                .datesOccupied(roomBookedIntervals)
-                .build();
-
-        log.info("End getRoomInfo output:{}",output);
-
-        return output;
-    }
 
 
     @Override
