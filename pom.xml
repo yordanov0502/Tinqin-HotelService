@@ -20,6 +20,7 @@
         <revision>0.0.1-SNAPSHOT</revision>
         <springdoc-openapi-starter-webmvc-ui-version>2.6.0</springdoc-openapi-starter-webmvc-ui-version>
         <jackson-databind-version>2.16.0</jackson-databind-version>
+        <flattenpomversion>1.2.7</flattenpomversion>
         <java.version>21</java.version>
     </properties>
 
@@ -77,19 +78,15 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.7</version> <!-- Use the latest version -->
+                <version>${flattenpomversion}</version>
                 <executions>
                     <execution>
-                        <id>flatten</id>
-                        <phase>process-resources</phase>
                         <goals>
                             <goal>flatten</goal>
                         </goals>
+                        <phase>process-resources</phase>
                     </execution>
                 </executions>
-                <configuration>
-                    <!-- Configuration options -->
-                </configuration>
             </plugin>
         </plugins>
     </build>
