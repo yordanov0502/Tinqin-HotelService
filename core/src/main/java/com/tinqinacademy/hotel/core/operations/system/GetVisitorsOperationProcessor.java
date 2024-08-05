@@ -1,11 +1,11 @@
 package com.tinqinacademy.hotel.core.operations.system;
 
-import com.tinqinacademy.hotel.api.error.Errors;
+import com.tinqinacademy.hotel.api.exceptions.Errors;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorOperation;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsInput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
-import com.tinqinacademy.hotel.core.exceptions.custom.BookingDatesException;
+import com.tinqinacademy.hotel.api.exceptions.custom.BookingDatesException;
 import com.tinqinacademy.hotel.core.operations.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;

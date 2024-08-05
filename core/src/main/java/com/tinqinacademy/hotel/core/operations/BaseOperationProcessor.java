@@ -1,9 +1,9 @@
 package com.tinqinacademy.hotel.core.operations;
 
 import com.tinqinacademy.hotel.api.base.OperationInput;
-import com.tinqinacademy.hotel.api.error.Error;
+import com.tinqinacademy.hotel.api.exceptions.Error;
 import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
-import com.tinqinacademy.hotel.core.exceptions.custom.ViolationsException;
+import com.tinqinacademy.hotel.api.exceptions.custom.ViolationsException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;

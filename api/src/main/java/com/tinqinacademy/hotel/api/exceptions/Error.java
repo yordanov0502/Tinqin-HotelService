@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.api.error;
+package com.tinqinacademy.hotel.api.exceptions;
 
 import lombok.*;
 

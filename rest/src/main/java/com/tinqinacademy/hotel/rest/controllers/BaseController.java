@@ -1,7 +1,7 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 import com.tinqinacademy.hotel.api.base.OperationOutput;
-import com.tinqinacademy.hotel.api.error.Errors;
+import com.tinqinacademy.hotel.api.exceptions.Errors;
 import io.vavr.control.Either;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
