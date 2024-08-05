@@ -1,11 +1,11 @@
 package com.tinqinacademy.hotel.core.operations.hotel;
 
-import com.tinqinacademy.hotel.api.error.Errors;
+import com.tinqinacademy.hotel.api.exceptions.Errors;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
 import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
-import com.tinqinacademy.hotel.core.exceptions.custom.NotFoundException;
+import com.tinqinacademy.hotel.api.exceptions.custom.NotFoundException;
 import com.tinqinacademy.hotel.core.operations.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;

@@ -1,6 +1,6 @@
-package com.tinqinacademy.hotel.core.exceptions.custom;
+package com.tinqinacademy.hotel.api.exceptions.custom;
 
-import com.tinqinacademy.hotel.api.error.Error;
+import com.tinqinacademy.hotel.api.exceptions.Error;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

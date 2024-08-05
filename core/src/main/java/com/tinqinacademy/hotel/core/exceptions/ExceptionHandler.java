@@ -1,8 +1,9 @@
 package com.tinqinacademy.hotel.core.exceptions;
 
-import com.tinqinacademy.hotel.api.error.Error;
-import com.tinqinacademy.hotel.api.error.Errors;
-import com.tinqinacademy.hotel.core.exceptions.custom.*;
+import com.tinqinacademy.hotel.api.exceptions.Error;
+import com.tinqinacademy.hotel.api.exceptions.Errors;
+import com.tinqinacademy.hotel.api.exceptions.custom.CustomException;
+import com.tinqinacademy.hotel.api.exceptions.custom.ViolationsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
