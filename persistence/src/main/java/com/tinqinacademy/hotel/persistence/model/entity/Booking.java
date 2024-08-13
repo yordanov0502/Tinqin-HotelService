@@ -34,6 +34,9 @@ public class Booking {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
+
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
@@ -44,10 +47,6 @@ public class Booking {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id")

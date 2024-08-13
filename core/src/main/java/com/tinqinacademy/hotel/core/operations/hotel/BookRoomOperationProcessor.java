@@ -53,8 +53,6 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
 
             Room room = findRoomById(input.getRoomId());
 
-            User user = findUserByFirstAndLastNameAndPhone(input.getFirstName(),input.getLastName(),input.getPhoneNumber());
-
             checkRoomAvailability(room.getId(),input.getStartDate(),input.getEndDate());
 
             long days = input.getEndDate().toEpochDay() - input.getStartDate().toEpochDay();
@@ -63,7 +61,6 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
             Booking newBooking = conversionService.convert(input,Booking.BookingBuilder.class)
                     .totalPrice(priceOfBooking)
                     .room(room)
-                    .user(user)
                     .build();
             bookingRepository.save(newBooking);
 
@@ -115,20 +112,4 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
         log.info(String.format("End %s %s.", this.getClass().getSimpleName(), LoggingUtils.getMethodName()));
     }
 
-    private User findUserByFirstAndLastNameAndPhone(String firstName, String lastName, String phoneNumber) {
-
-        log.info(String.format("Start %s %s input: %s,%s,%s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),firstName,lastName,phoneNumber));
-
-        User user = userRepository
-                .findByFirstNameAndLastNameAndPhoneNumber(
-                        firstName,
-                        lastName,
-                        phoneNumber)
-                .orElseThrow(() -> new NotFoundException(String.format("User with name: %s %s and phone number: %s"+
-                        " doesn't exist.", firstName,lastName,phoneNumber)));
-
-        log.info(String.format("End %s %s output: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),user.toString()));
-
-        return user;
-    }
 }
