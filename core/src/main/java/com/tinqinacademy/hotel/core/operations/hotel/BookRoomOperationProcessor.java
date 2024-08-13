@@ -66,8 +66,7 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
 
             BookRoomOutput output = BookRoomOutput.builder().build();
 
-            log.info("End bookRoom output:{}",output);
-
+            log.info(String.format("End %s %s output: %s",this.getClass().getSimpleName(),LoggingUtils.getMethodName(), output));
             return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
