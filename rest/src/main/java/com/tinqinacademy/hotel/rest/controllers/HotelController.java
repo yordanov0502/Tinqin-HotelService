@@ -98,13 +98,10 @@ public class HotelController extends BaseController{
     })
     @PostMapping(RestApiRoutes.BOOK_ROOM)
     public ResponseEntity<?> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput inputArg) {
-
         BookRoomInput input = inputArg.toBuilder()
                 .roomId(roomId)
                 .build();
-
         Either<Errors,BookRoomOutput> either = bookRoomOperation.process(input);
-
         return mapToResponseEntity(either,HttpStatus.CREATED);
         }
 

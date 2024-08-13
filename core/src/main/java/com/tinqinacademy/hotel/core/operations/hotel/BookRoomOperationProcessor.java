@@ -53,8 +53,6 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
 
             Room room = findRoomById(input.getRoomId());
 
-            User user = findUserByFirstAndLastNameAndPhone(input.getFirstName(),input.getLastName(),input.getPhoneNumber());
-
             checkRoomAvailability(room.getId(),input.getStartDate(),input.getEndDate());
 
             long days = input.getEndDate().toEpochDay() - input.getStartDate().toEpochDay();
@@ -63,7 +61,6 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
             Booking newBooking = conversionService.convert(input,Booking.BookingBuilder.class)
                     .totalPrice(priceOfBooking)
                     .room(room)
-                    .user(user)
                     .build();
             bookingRepository.save(newBooking);
 

@@ -5,6 +5,8 @@ import com.tinqinacademy.hotel.core.converters.BaseConverter;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class BookRoomInputToBooking extends BaseConverter<BookRoomInput, Booking.BookingBuilder, BookRoomInputToBooking> {
 
@@ -17,7 +19,8 @@ public class BookRoomInputToBooking extends BaseConverter<BookRoomInput, Booking
 
         Booking.BookingBuilder bookingBuilder = Booking.builder()
                 .startDate(input.getStartDate())
-                .endDate(input.getEndDate());
+                .endDate(input.getEndDate())
+                .userId(UUID.fromString(input.getUserId()));
 
         return bookingBuilder;
     }
