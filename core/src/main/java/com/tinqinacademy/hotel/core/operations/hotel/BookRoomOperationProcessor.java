@@ -112,20 +112,4 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
         log.info(String.format("End %s %s.", this.getClass().getSimpleName(), LoggingUtils.getMethodName()));
     }
 
-    private User findUserByFirstAndLastNameAndPhone(String firstName, String lastName, String phoneNumber) {
-
-        log.info(String.format("Start %s %s input: %s,%s,%s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),firstName,lastName,phoneNumber));
-
-        User user = userRepository
-                .findByFirstNameAndLastNameAndPhoneNumber(
-                        firstName,
-                        lastName,
-                        phoneNumber)
-                .orElseThrow(() -> new NotFoundException(String.format("User with name: %s %s and phone number: %s"+
-                        " doesn't exist.", firstName,lastName,phoneNumber)));
-
-        log.info(String.format("End %s %s output: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),user.toString()));
-
-        return user;
-    }
 }
