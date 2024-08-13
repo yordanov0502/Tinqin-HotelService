@@ -89,7 +89,7 @@ public class HotelController extends BaseController{
     }
 
 
-    @Operation(summary = "Book a room.",
+    @Operation(summary = "Book room.",
             description = "Books the room specified.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully booked room."),
@@ -107,8 +107,8 @@ public class HotelController extends BaseController{
 
 
 
-    @Operation(summary = "Unbook a room from hotel.",
-            description = "Unbooks a room that the user has already been booked.")
+    @Operation(summary = "Unbook room.",
+            description = "Unbooks a room that the user has already booked.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully unbooked room."),
             @ApiResponse(responseCode = "400", description = "Bad request."),
@@ -125,7 +125,5 @@ public class HotelController extends BaseController{
 
         return mapToResponseEntity(either,HttpStatus.OK);
     }
-
-
 
 }

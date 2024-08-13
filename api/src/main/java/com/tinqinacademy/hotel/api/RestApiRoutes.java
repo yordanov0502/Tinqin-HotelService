@@ -6,6 +6,7 @@ public class RestApiRoutes {
 
     public static final String API_HOTEL = API+"/hotel";
     public static final String API_SYSTEM = API+"/system";
+    public static final String API_INTERNAL = API+"/internal";
 
 
 
@@ -22,4 +23,9 @@ public class RestApiRoutes {
     public static final String UPDATE_ROOM = API_SYSTEM+"/room/{roomId}";
     public static final String UPDATE_ROOM_PARTIALLY = API_SYSTEM+"/room/{roomId}";
     public static final String DELETE_ROOM = API_SYSTEM+"/room/{roomId}";
+
+
+
+    public static final String GET_USERID_OF_BOOKING = API_INTERNAL+"/user-id/{bookingId}";
+
 }

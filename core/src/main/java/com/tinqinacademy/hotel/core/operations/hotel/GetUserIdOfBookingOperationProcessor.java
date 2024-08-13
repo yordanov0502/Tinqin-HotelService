@@ -1,11 +1,11 @@
 package com.tinqinacademy.hotel.core.operations.hotel;
 
 import com.tinqinacademy.hotel.api.exceptions.Errors;
-import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookOperation;
-import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
-import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
-import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
 import com.tinqinacademy.hotel.api.exceptions.custom.NotFoundException;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.getuseridofbooking.GetUserIdOfBookingInput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.getuseridofbooking.GetUserIdOfBookingOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.getuseridofbooking.GetUserIdOfBookingOutput;
+import com.tinqinacademy.hotel.core.exceptions.ExceptionService;
 import com.tinqinacademy.hotel.core.operations.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
@@ -21,26 +21,27 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class UnbookRoomOperationProcessor extends BaseOperationProcessor implements UnbookOperation {
+public class GetUserIdOfBookingOperationProcessor extends BaseOperationProcessor implements GetUserIdOfBookingOperation {
 
     private final BookingRepository bookingRepository;
 
-    public UnbookRoomOperationProcessor(ConversionService conversionService, ExceptionService exceptionService, Validator validator, BookingRepository bookingRepository) {
+    public GetUserIdOfBookingOperationProcessor(ConversionService conversionService, ExceptionService exceptionService, Validator validator, BookingRepository bookingRepository) {
         super(conversionService, exceptionService, validator);
         this.bookingRepository = bookingRepository;
     }
 
     @Override
-    public Either<Errors, UnbookRoomOutput> process(UnbookRoomInput input) {
-
+    public Either<Errors, GetUserIdOfBookingOutput> process(GetUserIdOfBookingInput input) {
         return Try.of(() -> {
                     log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(), input));
                     validate(input);
 
                     Booking booking = findBookingById(input.getBookingId());
-                    bookingRepository.delete(booking);
+                    String userId = booking.getUserId().toString();
 
-                    UnbookRoomOutput output = UnbookRoomOutput.builder().build();
+                    GetUserIdOfBookingOutput output = GetUserIdOfBookingOutput.builder()
+                            .userId(userId)
+                            .build();
                     log.info(String.format("End %s %s output: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(), output));
                     return output;
                 })
