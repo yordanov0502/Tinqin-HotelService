@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.core.operations.hotel;
 
 import com.tinqinacademy.hotel.api.exceptions.Errors;
+import com.tinqinacademy.hotel.api.exceptions.custom.UnbookException;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
@@ -38,6 +39,7 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
                     validate(input);
 
                     Booking booking = findBookingById(input.getBookingId());
+                    checkBookingCreator(input.getUserId(),booking.getUserId().toString());
                     bookingRepository.delete(booking);
 
                     UnbookRoomOutput output = UnbookRoomOutput.builder().build();
@@ -59,5 +61,15 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
         log.info(String.format("End %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(), booking.toString()));
 
         return booking;
+    }
+
+    private void checkBookingCreator(String authUserId, String userIdOfBooking){
+        log.info(String.format("Start %s %s input: %s %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(), authUserId, userIdOfBooking));
+
+        if(!authUserId.equals(userIdOfBooking)){
+            throw new UnbookException("You cannot unbook a room, which you haven't booked.");
+        }
+
+        log.info(String.format("End %s %s.", this.getClass().getSimpleName(), LoggingUtils.getMethodName()));
     }
 }
