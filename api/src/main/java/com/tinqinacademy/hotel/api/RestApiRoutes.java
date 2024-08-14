@@ -24,8 +24,4 @@ public class RestApiRoutes {
     public static final String UPDATE_ROOM_PARTIALLY = API_SYSTEM+"/room/{roomId}";
     public static final String DELETE_ROOM = API_SYSTEM+"/room/{roomId}";
 
-
-
-    public static final String GET_USERID_OF_BOOKING = API_INTERNAL+"/user-id/{bookingId}";
-
 }

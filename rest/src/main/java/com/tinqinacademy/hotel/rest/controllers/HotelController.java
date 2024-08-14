@@ -115,14 +115,11 @@ public class HotelController extends BaseController{
             @ApiResponse(responseCode = "404", description = "Not found.")
     })
     @DeleteMapping(RestApiRoutes.UNBOOK_ROOM)
-    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId) {
-
-        UnbookRoomInput input = UnbookRoomInput.builder()
+    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId, @RequestBody UnbookRoomInput inputArg) {
+        UnbookRoomInput input = inputArg.toBuilder()
                 .bookingId(bookingId)
                 .build();
-
         Either<Errors,UnbookRoomOutput> either = unbookOperation.process(input);
-
         return mapToResponseEntity(either,HttpStatus.OK);
     }
 
