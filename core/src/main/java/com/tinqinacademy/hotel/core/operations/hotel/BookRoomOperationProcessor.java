@@ -73,8 +73,13 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
     }
 
     private void validateDates(LocalDate startDate, LocalDate endDate) {
-
         log.info(String.format("Start %s %s input: %s %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),startDate,endDate));
+
+        LocalDate today = LocalDate.now();
+
+        if(startDate.isBefore(today)) {
+            throw new BookingDatesException("Start date of booking cannot be before today.");
+        }
 
         if(startDate.isEqual(endDate)) {
             throw new BookingDatesException("Start date and end date of booking cannot be equal.");

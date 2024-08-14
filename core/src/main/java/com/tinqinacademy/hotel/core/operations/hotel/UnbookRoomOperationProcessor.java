@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.core.operations.hotel;
 
 import com.tinqinacademy.hotel.api.exceptions.Errors;
+import com.tinqinacademy.hotel.api.exceptions.custom.BookingDatesException;
 import com.tinqinacademy.hotel.api.exceptions.custom.UnbookException;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Slf4j
@@ -39,6 +41,7 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
                     validate(input);
 
                     Booking booking = findBookingById(input.getBookingId());
+                    validateDates(booking.getStartDate());
                     checkBookingCreator(input.getUserId(),booking.getUserId().toString());
                     bookingRepository.delete(booking);
 
@@ -61,6 +64,18 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
         log.info(String.format("End %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(), booking.toString()));
 
         return booking;
+    }
+
+    private void validateDates(LocalDate startDate) {
+        log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),startDate));
+
+        LocalDate today = LocalDate.now();
+
+        if(!startDate.isBefore(today)) {
+            throw new BookingDatesException("You cannot unbook a room, because your booking has already started.");
+        }
+
+        log.info(String.format("End %s %s",this.getClass().getSimpleName(),LoggingUtils.getMethodName()));
     }
 
     private void checkBookingCreator(String authUserId, String userIdOfBooking){
