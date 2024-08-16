@@ -8,6 +8,7 @@ import com.tinqinacademy.hotel.api.validation.bathroomtype.BathroomTypeCode;
 import com.tinqinacademy.hotel.api.validation.bedsize.BedSizeCode;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.math.BigDecimal;
 
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 public class UpdateRoomPartiallyInput implements OperationInput {
 
     @JsonIgnore
+    @UUID
     private String roomId;
     @Min(value = 1)
     @Max(value = 10)

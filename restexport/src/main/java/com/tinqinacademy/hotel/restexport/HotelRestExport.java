@@ -15,6 +15,8 @@ import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVis
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyOutput;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
@@ -67,4 +69,8 @@ public interface HotelRestExport {
 
     @RequestLine("PUT "+RestApiRoutes.UPDATE_ROOM)
     UpdateRoomOutput updateRoom(@Param String roomId, @RequestBody UpdateRoomInput input);
+
+    @RequestLine("PATCH "+RestApiRoutes.UPDATE_ROOM_PARTIALLY)
+    @Headers({"Content-Type: application/json-patch+json"})
+    UpdateRoomPartiallyOutput updateRoomPartially(@Param String roomId, @RequestBody UpdateRoomPartiallyInput input);
 }
