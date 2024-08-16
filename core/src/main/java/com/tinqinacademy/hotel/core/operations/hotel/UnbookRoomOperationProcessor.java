@@ -71,8 +71,8 @@ public class UnbookRoomOperationProcessor extends BaseOperationProcessor impleme
 
         LocalDate today = LocalDate.now();
 
-        if(!startDate.isBefore(today)) {
-            throw new BookingDatesException("You cannot unbook a room, because your booking has already started.");
+        if(!startDate.isAfter(today)) {
+            throw new BookingDatesException("You cannot unbook a room, because your booking has already started or passed.");
         }
 
         log.info(String.format("End %s %s",this.getClass().getSimpleName(),LoggingUtils.getMethodName()));
