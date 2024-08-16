@@ -1,8 +1,10 @@
 package com.tinqinacademy.hotel.api.operations.system.registervisitor.content;
 
+import com.tinqinacademy.hotel.api.validation.name.NameRegex;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.time.LocalDate;
 
@@ -13,14 +15,16 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VisitorInput {
+    @NotBlank
+    @UUID
     private String roomId;
     @NotNull
     private LocalDate startDate;
     @NotNull
     private LocalDate endDate;
-    @NotBlank
+    @NameRegex
     private String firstName;
-    @NotBlank
+    @NameRegex
     private String lastName;
     @NotNull
     private LocalDate dateOfBirth;
