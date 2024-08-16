@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.math.BigDecimal;
 
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 public class UpdateRoomInput implements OperationInput {
 
     @JsonIgnore
+    @UUID
     private String roomId;
     @Positive
     @NotNull
