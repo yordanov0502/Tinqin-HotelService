@@ -8,6 +8,8 @@ import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableR
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
@@ -35,4 +37,8 @@ public interface HotelRestExport {
 
     @RequestLine("DELETE "+RestApiRoutes.UNBOOK_ROOM)
     UnbookRoomOutput unbookRoom(@Param String bookingId, @RequestBody UnbookRoomInput input);
+
+    @RequestLine("POST "+RestApiRoutes.REGISTER_VISITOR)
+    RegisterVisitorOutput registerVisitors(@RequestBody RegisterVisitorInput input);
+
 }
