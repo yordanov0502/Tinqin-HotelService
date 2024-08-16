@@ -8,6 +8,8 @@ import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableR
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
@@ -57,4 +59,7 @@ public interface HotelRestExport {
             @Param("idCardIssueDate") LocalDate idCardIssueDate,
             @Param("roomNumber") String roomNumber
     );
+
+    @RequestLine("POST "+RestApiRoutes.CREATE_ROOM)
+    CreateRoomOutput createRoom(@RequestBody CreateRoomInput input);
 }
