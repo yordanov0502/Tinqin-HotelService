@@ -8,6 +8,7 @@ import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableR
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
 import feign.Headers;
@@ -41,4 +42,19 @@ public interface HotelRestExport {
     @RequestLine("POST "+RestApiRoutes.REGISTER_VISITOR)
     RegisterVisitorOutput registerVisitors(@RequestBody RegisterVisitorInput input);
 
+    @RequestLine("GET /api/v1/system/register?startDate={startDate}&endDate={endDate}&firstName={firstName}&" +
+            "lastName={lastName}&phoneNumber={phoneNumber}&idCardNumber={idCardNumber}&idCardValidity={idCardValidity}&" +
+            "idCardIssueAuthority={idCardIssueAuthority}&idCardIssueDate={idCardIssueDate}&roomNumber={roomNumber}")
+    GetVisitorsOutput getVisitors(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("firstName") String firstName,
+            @Param("lastName") String lastName,
+            @Param("phoneNumber") String phoneNumber,
+            @Param("idCardNumber") String idCardNumber,
+            @Param("idCardValidity") LocalDate idCardValidity,
+            @Param("idCardIssueAuthority") String idCardIssueAuthority,
+            @Param("idCardIssueDate") LocalDate idCardIssueDate,
+            @Param("roomNumber") String roomNumber
+    );
 }
