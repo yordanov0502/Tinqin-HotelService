@@ -73,4 +73,7 @@ public interface HotelRestExport {
     @RequestLine("PATCH "+RestApiRoutes.UPDATE_ROOM_PARTIALLY)
     @Headers({"Content-Type: application/json-patch+json"})
     UpdateRoomPartiallyOutput updateRoomPartially(@Param String roomId, @RequestBody UpdateRoomPartiallyInput input);
+
+    @RequestLine("DELETE "+RestApiRoutes.DELETE_ROOM)
+    CreateRoomOutput deleteRoom(@Param String roomId);
 }
