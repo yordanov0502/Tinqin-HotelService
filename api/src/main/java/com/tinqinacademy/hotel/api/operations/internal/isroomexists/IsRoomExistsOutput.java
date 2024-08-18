@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.api.operations.internal;
+package com.tinqinacademy.hotel.api.operations.internal.isroomexists;
 
 import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.*;

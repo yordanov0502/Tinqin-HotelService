@@ -25,5 +25,5 @@ public class RestApiRoutes {
     public static final String DELETE_ROOM = API_SYSTEM+"/room/{roomId}";
 
     public static final String IS_ROOM_EXISTS = API_INTERNAL+"/{roomId}";
-
+    public static final String GET_ROOMID_BY_NUMBER = API_INTERNAL+"/room/{roomNumber}";
 }
