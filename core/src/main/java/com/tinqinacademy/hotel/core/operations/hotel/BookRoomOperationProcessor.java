@@ -12,10 +12,8 @@ import com.tinqinacademy.hotel.core.operations.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.utils.LoggingUtils;
 import com.tinqinacademy.hotel.persistence.model.entity.Booking;
 import com.tinqinacademy.hotel.persistence.model.entity.Room;
-import com.tinqinacademy.hotel.persistence.model.entity.User;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
-import com.tinqinacademy.hotel.persistence.repository.UserRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import jakarta.validation.Validator;
@@ -33,13 +31,11 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor implement
 
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
 
-    public BookRoomOperationProcessor(ConversionService conversionService, ExceptionService exceptionService, Validator validator, RoomRepository roomRepository, BookingRepository bookingRepository, UserRepository userRepository) {
+    public BookRoomOperationProcessor(ConversionService conversionService, ExceptionService exceptionService, Validator validator, RoomRepository roomRepository, BookingRepository bookingRepository) {
         super(conversionService, exceptionService, validator);
         this.roomRepository = roomRepository;
         this.bookingRepository = bookingRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
