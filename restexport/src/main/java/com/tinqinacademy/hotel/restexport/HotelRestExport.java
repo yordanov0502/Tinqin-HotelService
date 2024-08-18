@@ -8,6 +8,7 @@ import com.tinqinacademy.hotel.api.operations.hotel.getavailablerooms.AvailableR
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.RoomInfoOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.internal.IsRoomExistsOutput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
@@ -76,4 +77,7 @@ public interface HotelRestExport {
 
     @RequestLine("DELETE "+RestApiRoutes.DELETE_ROOM)
     CreateRoomOutput deleteRoom(@Param String roomId);
+
+    @RequestLine("GET"+RestApiRoutes.IS_ROOM_EXISTS)
+    IsRoomExistsOutput checkIfRoomExists(@Param String roomId);
 }
