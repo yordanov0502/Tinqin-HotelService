@@ -1,4 +1,4 @@
-package com.tinqinacademy.hotel.api.operations.internal;
+package com.tinqinacademy.hotel.api.operations.internal.isroomexists;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tinqinacademy.hotel.api.base.OperationInput;
