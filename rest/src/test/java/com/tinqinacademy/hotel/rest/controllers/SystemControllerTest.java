@@ -5,65 +5,148 @@ import com.tinqinacademy.hotel.api.RestApiRoutes;
 import com.tinqinacademy.hotel.api.model.enums.BathroomType;
 import com.tinqinacademy.hotel.api.model.enums.BedSize;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
-import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.content.VisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroompartially.UpdateRoomPartiallyInput;
+import com.tinqinacademy.hotel.persistence.initializr.BedInitializer;
+import com.tinqinacademy.hotel.persistence.model.entity.Bed;
+import com.tinqinacademy.hotel.persistence.model.entity.Booking;
+import com.tinqinacademy.hotel.persistence.model.entity.Room;
+import com.tinqinacademy.hotel.persistence.repository.BedRepository;
+import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
+import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY, connection = EmbeddedDatabaseConnection.H2)
 class SystemControllerTest {
 
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper mapper;
+    @Autowired
+    private RoomRepository roomRepository;
+    @Autowired
+    private BedRepository bedRepository;
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private BedInitializer bedInitializer;
+
+    @BeforeEach
+    public void setup() {
+        //? Manually invoke the BedInitializer
+        bedInitializer.run(new ApplicationArguments() {
+            @Override
+            public String[] getSourceArgs() {
+                return new String[0];
+            }
+
+            @Override
+            public Set<String> getOptionNames() {
+                return Collections.emptySet();
+            }
+
+            @Override
+            public boolean containsOption(String name) {
+                return false;
+            }
+
+            @Override
+            public List<String> getOptionValues(String name) {
+                return null;
+            }
+
+            @Override
+            public List<String> getNonOptionArgs() {
+                return Collections.emptyList();
+            }
+        });
+
+        Bed bed = bedRepository.findByBedSize(com.tinqinacademy.hotel.persistence.model.enums.BedSize.SINGLE).get();
+
+        Room room = Room.builder()
+                .roomNumber("1A")
+                .floor(1)
+                .price(BigDecimal.valueOf(100))
+                .bathroomType(com.tinqinacademy.hotel.persistence.model.enums.BathroomType.PRIVATE)
+                .beds(List.of(bed,bed))
+                .build();
+        room = roomRepository.save(room);
+
+        Booking booking = Booking.builder()
+                .startDate(LocalDate.of(2024, 11, 22))
+                .endDate(LocalDate.of(2024, 11, 25))
+                .userId(UUID.fromString("c57fcf0e-dbd4-41a4-96f0-18b0778c0712"))
+                .totalPrice(BigDecimal.valueOf(300))
+                .room(room)
+                .guests(new HashSet<>())
+                .build();
+        booking = bookingRepository.save(booking);
+    }
+
+    @AfterEach
+    public void afterEach() {
+        bookingRepository.deleteAll();
+        roomRepository.deleteAll();
+        bedRepository.deleteAll();
+    }
 
     @Test
     void registerVisitorCreated() throws Exception {
+        String roomId = roomRepository.findAll().get(0).getId().toString();
+
         VisitorInput visitor1 = VisitorInput.builder()
-                .startDate(LocalDate.of(2024, 7, 10))
-                .endDate(LocalDate.of(2024, 7, 15))
-                .firstName("Todor")
-                .lastName("Yordanov")
-                .phoneNumber("0882987231")
-                .idCardNumber("132123")
-                .idCardValidity(LocalDate.of(2024, 8, 10))
-                .idCardIssueAuthority("abcd")
-                .idCardIssueDate(LocalDate.of(2022, 7, 10))
+                .roomId(roomId)
+                .startDate(LocalDate.of(2024, 11, 22))
+                .endDate(LocalDate.of(2024, 11, 25))
+                .firstName("Katya")
+                .lastName("Yordanova")
+                .dateOfBirth(LocalDate.of(1975,9,27))
+                .phoneNumber("0894735633")
+                .idCardNumber("1234")
+                .idCardValidity(LocalDate.of(2028, 8, 8))
+                .idCardIssueAuthority("МВР-Варна")
+                .idCardIssueDate(LocalDate.of(2018, 8, 8))
                 .build();
 
         RegisterVisitorInput input = RegisterVisitorInput.builder()
                 .visitorInputList(List.of(visitor1))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult registerVisitor = mvc.perform(post(RestApiRoutes.REGISTER_VISITOR)
+        mvc.perform(post(RestApiRoutes.REGISTER_VISITOR)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(201,registerVisitor.getResponse().getStatus());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -72,106 +155,98 @@ class SystemControllerTest {
                 .visitorInputList(null)
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult registerVisitor = mvc.perform(post(RestApiRoutes.REGISTER_VISITOR)
+        mvc.perform(post(RestApiRoutes.REGISTER_VISITOR)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(400,registerVisitor.getResponse().getStatus());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void registerVisitorNotFound() throws Exception {
+        String roomId = roomRepository.findAll().get(0).getId().toString();
+
         VisitorInput visitor1 = VisitorInput.builder()
-                .startDate(LocalDate.of(2024, 7, 10))
-                .endDate(LocalDate.of(2024, 7, 15))
-                .firstName("Todor")
-                .lastName("Yordanov")
-                .phoneNumber("0882987231")
-                .idCardNumber("132123")
-                .idCardValidity(LocalDate.of(2024, 8, 10))
-                .idCardIssueAuthority("abcd")
-                .idCardIssueDate(LocalDate.of(2022, 7, 10))
+                .roomId(roomId)
+                .startDate(LocalDate.of(2024, 11, 22))
+                .endDate(LocalDate.of(2024, 11, 25))
+                .firstName("Katya")
+                .lastName("Yordanova")
+                .dateOfBirth(LocalDate.of(1975,9,27))
+                .phoneNumber("0894735633")
+                .idCardNumber("1234")
+                .idCardValidity(LocalDate.of(2028, 8, 8))
+                .idCardIssueAuthority("МВР-Варна")
+                .idCardIssueDate(LocalDate.of(2018, 8, 8))
                 .build();
 
         RegisterVisitorInput input = RegisterVisitorInput.builder()
                 .visitorInputList(List.of(visitor1))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult registerVisitor = mvc.perform(post(RestApiRoutes.REGISTER_VISITOR+"/wrong")
+        mvc.perform(post(RestApiRoutes.REGISTER_VISITOR+"/wrong")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(404,registerVisitor.getResponse().getStatus());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void getVisitorsOk() throws Exception {
-        MvcResult getVisitors = mvc.perform(get(RestApiRoutes.GET_VISITORS)
+        mvc.perform(get(RestApiRoutes.GET_VISITORS)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("startDate","2024-07-10")
-                        .param("endDate","2024-07-15")
-                        .param("firstName","Todor")
-                        .param("lastName","Yordanov")
-                        .param("phoneNumber","0882983123")
-                        .param("idCardNumber","1234")
-                        .param("idCardValidity","2024-07-20")
-                        .param("idCardIssueAuthority","abcd")
-                        .param("idCardIssueDate","2022-08-08")
-                        .param("roomNumber","12A")
+                        .param("startDate","2024-11-22")
+                        .param("endDate","2024-11-25")
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(200,getVisitors.getResponse().getStatus());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.visitorOutputList", hasSize(1)));
     }
 
     @Test
     void getVisitorsNotFound() throws Exception {
-        MvcResult getVisitors = mvc.perform(get(RestApiRoutes.GET_VISITORS+"/wrong")
+        mvc.perform(get(RestApiRoutes.GET_VISITORS+"/wrong")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("startDate","2024-07-10")
                         .param("endDate","2024-07-15")
-                        .param("firstName","Todor")
-                        .param("lastName","Yordanov")
-                        .param("phoneNumber","0882983123")
-                        .param("idCardNumber","1234")
-                        .param("idCardValidity","2024-07-20")
-                        .param("idCardIssueAuthority","abcd")
-                        .param("idCardIssueDate","2022-08-08")
-                        .param("roomNumber","12A")
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(404,getVisitors.getResponse().getStatus());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void createRoomCreated() throws Exception {
+        Integer newBedCount = 5;
+        Integer newFloor = 4;
+        String newRoomNumber = "4C";
+        BigDecimal newPrice = BigDecimal.valueOf(125.44);
+
         CreateRoomInput input = CreateRoomInput.builder()
-                .bedCount(5)
+                .bedCount(newBedCount)
                 .bedSize(BedSize.getByCode("queenSize"))
                 .bathroomType(BathroomType.getByCode("private"))
-                .floor(4)
-                .roomNo("13C")
-                .price(BigDecimal.valueOf(125.44))
+                .floor(newFloor)
+                .roomNo(newRoomNumber)
+                .price(newPrice)
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult createRoom = mvc.perform(post(RestApiRoutes.CREATE_ROOM)
+        mvc.perform(post(RestApiRoutes.CREATE_ROOM)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
+                .andExpect(status().isCreated());
 
-        assertEquals(201,createRoom.getResponse().getStatus());
+        String roomId = roomRepository.findAll().get(1).getId().toString();
+        Room newRoom = roomRepository.findById(UUID.fromString(roomId)).get();
+
+        assertEquals(newRoom.getBeds().size(),newBedCount);
+        assertEquals(newRoom.getFloor(),newFloor);
+        assertEquals(newRoom.getRoomNumber(),newRoomNumber);
+        assertEquals(newRoom.getPrice(),newPrice);
     }
 
     @Test
@@ -185,15 +260,13 @@ class SystemControllerTest {
                 .price(BigDecimal.valueOf(125.44))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult createRoom = mvc.perform(post(RestApiRoutes.CREATE_ROOM)
+        mvc.perform(post(RestApiRoutes.CREATE_ROOM)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(400,createRoom.getResponse().getStatus());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -207,47 +280,52 @@ class SystemControllerTest {
                 .price(BigDecimal.valueOf(125.44))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult createRoom = mvc.perform(post("/wrong/path")
+        mvc.perform(post("/wrong/path")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(404,createRoom.getResponse().getStatus());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void updateRoomOk() throws Exception {
-
-        String roomId = "0789ef57-e130-4db4-a951-811622858142";
+        String roomId = roomRepository.findAll().get(0).getId().toString();
+        Integer newBedCount = 1;
+        Integer newFloor = 1;
+        String newRoomNumber = "2A";
+        BigDecimal newPrice = BigDecimal.valueOf(125.44);
 
         UpdateRoomInput input = UpdateRoomInput.builder()
-                .roomId(roomId)
-                .bedCount(5)
-                .bedSize(BedSize.getByCode("queenSize"))
-                .bathroomType(BathroomType.getByCode("private"))
-                .floor(4)
-                .roomNo("13C")
-                .price(BigDecimal.valueOf(125.44))
+                .bedCount(newBedCount)
+                .bedSize(BedSize.SINGLE)
+                .bathroomType(BathroomType.PRIVATE)
+                .floor(newFloor)
+                .roomNo(newRoomNumber)
+                .price(newPrice)
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult updateRoom = mvc.perform(put(RestApiRoutes.UPDATE_ROOM,roomId)
+        mvc.perform(put(RestApiRoutes.UPDATE_ROOM, roomId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roomId").value(roomId));
 
-        assertEquals(200,updateRoom.getResponse().getStatus());
+        Room updatedRoom = roomRepository.findById(UUID.fromString(roomId)).get();
+
+        assertEquals(updatedRoom.getBeds().size(),newBedCount);
+        assertEquals(updatedRoom.getFloor(),newFloor);
+        assertEquals(updatedRoom.getRoomNumber(),newRoomNumber);
+        assertEquals(updatedRoom.getPrice(),newPrice);
     }
 
     @Test
     void updateRoomBadRequest() throws Exception {
-
-        String roomId = "88f22514-aa69-4121-a47e-bfb814b3bb84";
+        String roomId = roomRepository.findAll().get(0).getId().toString();
 
         UpdateRoomInput input = UpdateRoomInput.builder()
                 .roomId(roomId)
@@ -259,21 +337,18 @@ class SystemControllerTest {
                 .price(BigDecimal.valueOf(125.44))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult updateRoom = mvc.perform(put(RestApiRoutes.UPDATE_ROOM,roomId)
+        mvc.perform(put(RestApiRoutes.UPDATE_ROOM,roomId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(400,updateRoom.getResponse().getStatus());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void updateRoomNotFound() throws Exception {
-
-        String roomId = "88f22514-aa69-4121-a47e-bfb814b3bb84";
+        String roomId = roomRepository.findAll().get(0).getId().toString();
 
         UpdateRoomInput input = UpdateRoomInput.builder()
                 .roomId(roomId)
@@ -285,144 +360,95 @@ class SystemControllerTest {
                 .price(BigDecimal.valueOf(125.44))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult updateRoom = mvc.perform(put(RestApiRoutes.UPDATE_ROOM+"/wrong",roomId)
+        mvc.perform(put(RestApiRoutes.UPDATE_ROOM+"/wrong",roomId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(404,updateRoom.getResponse().getStatus());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void updateRoomPartiallyOk() throws Exception {
-        String roomId = "88f22514-aa69-4121-a47e-bfb814b3bb84";
+        String roomId = roomRepository.findAll().get(0).getId().toString();
+        BigDecimal newPrice = BigDecimal.valueOf(99.44);
 
         UpdateRoomPartiallyInput input = UpdateRoomPartiallyInput.builder()
-                .roomId(roomId)
-                .bedCount(5)
-                .bedSize(BedSize.getByCode("queenSize"))
-                .bathroomType(BathroomType.getByCode("private"))
-                .floor(4)
-                .roomNo("13C")
-                .price(BigDecimal.valueOf(125.44))
+                .price(newPrice)
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult updateRoomPartially = mvc.perform(patch(RestApiRoutes.UPDATE_ROOM_PARTIALLY,roomId)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(patch(RestApiRoutes.UPDATE_ROOM_PARTIALLY,roomId)
+                        .contentType("application/json-patch+json")
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
+                .andExpect(status().isOk());
 
-        assertEquals(200,updateRoomPartially.getResponse().getStatus());
+        Room updatedRoom = roomRepository.findById(UUID.fromString(roomId)).get();
+        assertEquals(updatedRoom.getPrice(),newPrice);
     }
 
     @Test
     void updateRoomPartiallyBadRequest() throws Exception {
-        String roomId = "88f22514-aa69-4121-a47e-bfb814b3bb84";
+        String roomId = roomRepository.findAll().get(0).getId().toString();
 
         UpdateRoomPartiallyInput input = UpdateRoomPartiallyInput.builder()
                 .roomId(roomId)
-                .bedCount(5)
-                .bedSize(BedSize.getByCode("queenSize"))
-                .bathroomType(BathroomType.getByCode("private"))
                 .floor(-1)
-                .roomNo("13C")
-                .price(BigDecimal.valueOf(125.44))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult updateRoomPartially = mvc.perform(patch(RestApiRoutes.UPDATE_ROOM_PARTIALLY,roomId)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(patch(RestApiRoutes.UPDATE_ROOM_PARTIALLY,roomId)
+                        .contentType("application/json-patch+json")
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(400,updateRoomPartially.getResponse().getStatus());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void updateRoomPartiallyNotFound() throws Exception {
-        String roomId = "88f22514-aa69-4121-a47e-bfb814b3bb84";
+        String roomId = roomRepository.findAll().get(0).getId().toString();
 
         UpdateRoomPartiallyInput input = UpdateRoomPartiallyInput.builder()
-                .roomId(roomId)
-                .bedCount(5)
-                .bedSize(BedSize.getByCode("queenSize"))
-                .bathroomType(BathroomType.getByCode("private"))
-                .floor(4)
-                .roomNo("13C")
-                .price(BigDecimal.valueOf(125.44))
+                .price(BigDecimal.valueOf(225.44))
                 .build();
 
-        String serializedInput = objectMapper.writeValueAsString(input);
+        String serializedInput = mapper.writeValueAsString(input);
 
-        MvcResult updateRoomPartially = mvc.perform(patch(RestApiRoutes.UPDATE_ROOM_PARTIALLY+"/wrong",roomId)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(patch(RestApiRoutes.UPDATE_ROOM_PARTIALLY+"/wrong",roomId)
+                        .contentType("application/json-patch+json")
                         .content(serializedInput)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(404,updateRoomPartially.getResponse().getStatus());
+                .andExpect(status().isNotFound());
     }
 
     @Test
     void deleteRoomOk() throws Exception {
-        CreateRoomInput input = CreateRoomInput.builder()
-                .bedCount(5)
-                .bedSize(BedSize.getByCode("queenSize"))
-                .bathroomType(BathroomType.getByCode("private"))
-                .floor(4)
-                .roomNo("13C")
-                .price(BigDecimal.valueOf(125.44))
-                .build();
+        String roomId = roomRepository.findAll().get(0).getId().toString();
+        bookingRepository.deleteAll(); //? Booking is deleted so the room can be successfully deleted
 
-        String serializedInput = objectMapper.writeValueAsString(input);
-
-        MvcResult createRoomResult = mvc.perform(post(RestApiRoutes.CREATE_ROOM)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(serializedInput)
-                        .characterEncoding("UTF-8"))
-                .andReturn();
-
-
-        CreateRoomOutput createRoomOutput = objectMapper.readValue(createRoomResult.getResponse().getContentAsString(), CreateRoomOutput.class);
-        String roomId = createRoomOutput.getRoomId();
-
-        MvcResult deleteRoom = mvc.perform(delete(RestApiRoutes.DELETE_ROOM,roomId)
+        mvc.perform(delete(RestApiRoutes.DELETE_ROOM,roomId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(200,deleteRoom.getResponse().getStatus());
+                .andExpect(status().isOk());
     }
 
     @Test
     void deleteRoomBadRequest() throws Exception {
-        String roomId = "88f22514-aa69-4121-a47e-bfb814b3bb84";
-
-        MvcResult deleteRoom = mvc.perform(patch(RestApiRoutes.DELETE_ROOM,roomId)
+        mvc.perform(delete(RestApiRoutes.DELETE_ROOM,"noId")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(400,deleteRoom.getResponse().getStatus());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void deleteRoomNotFound() throws Exception {
-        String roomId = "11A";
-
-        MvcResult deleteRoom = mvc.perform(delete(RestApiRoutes.DELETE_ROOM+"/wrong",roomId)
+        mvc.perform(delete(RestApiRoutes.DELETE_ROOM+"/wrong","noId")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding("UTF-8"))
-                .andReturn();
-
-        assertEquals(404,deleteRoom.getResponse().getStatus());
+                .andExpect(status().isNotFound());
     }
 }

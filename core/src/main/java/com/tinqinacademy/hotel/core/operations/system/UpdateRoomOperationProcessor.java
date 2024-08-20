@@ -43,22 +43,22 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor impleme
     public Either<Errors, UpdateRoomOutput> process(UpdateRoomInput input) {
 
         return Try.of(() -> {
-            log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
+                    log.info(String.format("Start %s %s input: %s", this.getClass().getSimpleName(), LoggingUtils.getMethodName(),input));
 
-            validate(input);
+                    validate(input);
 
-            Room currentRoom = findRoomById(input.getRoomId());
-            if(!currentRoom.getRoomNumber().equals(input.getRoomNo())) {checkForExistingRoomNumber(input.getRoomNo());}
+                    Room currentRoom = findRoomById(input.getRoomId());
+                    if(!currentRoom.getRoomNumber().equals(input.getRoomNo())) {checkForExistingRoomNumber(input.getRoomNo());}
 
-            List<Bed> bedList = findBeds(BedSize.getByCode(input.getBedSize().getCode()), input.getBedCount());
-            Room room = conversionService.convert(input, Room.RoomBuilder.class)
-                    .beds(bedList)
-                    .build();
-            Room updatedRoom = roomRepository.save(room);
-            UpdateRoomOutput output = conversionService.convert(updatedRoom, UpdateRoomOutput.class);
+                    List<Bed> bedList = findBeds(BedSize.getByCode(input.getBedSize().getCode()), input.getBedCount());
+                    Room room = conversionService.convert(input, Room.RoomBuilder.class)
+                            .beds(bedList)
+                            .build();
+                    Room updatedRoom = roomRepository.save(room);
+                    UpdateRoomOutput output = conversionService.convert(updatedRoom, UpdateRoomOutput.class);
 
-            log.info(String.format("End %s %s output: %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),output));
-            return output;})
+                    log.info(String.format("End %s %s output: %s", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),output));
+                    return output;})
                 .toEither()
                 .mapLeft(exceptionService::handle);
     }
