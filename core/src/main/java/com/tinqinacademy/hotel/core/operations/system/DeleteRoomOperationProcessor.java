@@ -49,7 +49,7 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor impleme
             roomRepository.delete(room);
             DeleteRoomOutput output = DeleteRoomOutput.builder().build();
 
-            log.info(String.format("End %s %s output:{}", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),output));
+            log.info("End {} {} output:{}", this.getClass().getSimpleName(),LoggingUtils.getMethodName(),output);
             return output;
         })
                 .toEither()

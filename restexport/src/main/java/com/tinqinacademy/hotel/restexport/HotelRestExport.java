@@ -12,6 +12,7 @@ import com.tinqinacademy.hotel.api.operations.internal.getroomid.GetRoomIdOutput
 import com.tinqinacademy.hotel.api.operations.internal.isroomexists.IsRoomExistsOutput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.createroom.CreateRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.system.getvisitors.GetVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitor.RegisterVisitorOutput;
@@ -77,7 +78,7 @@ public interface HotelRestExport {
     UpdateRoomPartiallyOutput updateRoomPartially(@Param String roomId, @RequestBody UpdateRoomPartiallyInput input);
 
     @RequestLine("DELETE "+RestApiRoutes.DELETE_ROOM)
-    CreateRoomOutput deleteRoom(@Param String roomId);
+    DeleteRoomOutput deleteRoom(@Param String roomId);
 
     @RequestLine("GET "+RestApiRoutes.IS_ROOM_EXISTS)
     IsRoomExistsOutput checkIfRoomExists(@Param String roomId);
